@@ -2,6 +2,11 @@
 
 MiniTG is a simple top-down terrain generator.
 
+It uses deterministic, coordinate-hashed value noise with smooth interpolation
+to generate elevation values. Multiple noise octaves are combined using fractal
+Brownian motion (fBm), adding progressively finer terrain detail before each
+elevation is classified as deep water, water, sand, grass, rock, or snow.
+
 
 ## Building
 

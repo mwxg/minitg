@@ -98,4 +98,37 @@ float sampleValueNoise(float x, float y, std::uint32_t seed) noexcept {
     return lerp(row0, row1, blendY);
 }
 
+// combine multiple layers (octaves) of noise into one normalized
+// elevation sample
+// low values represent lower terrain and vice versa
+float sampleFractalNoise(float x, float y, const TerrainSettings& settings) noexcept {
+    // track both the weighted noise and the total weight so the final result
+    // remains in [0, 1] regardless of how many octaves are used
+    float total = 0.0f;
+    float totalAmplitude = 0.0f;
+
+    float frequency = settings.frequency;
+    float amplitude = 1.0f;
+    for (int octave = 0; octave < settings.octaves; octave++) {
+        // each octave samples the same deterministic noise field at a
+        // progressively finer scale
+        const float noise = sampleValueNoise(
+            x * frequency,
+            y * frequency,
+            static_cast<std::uint32_t>(settings.seed)
+        );
+
+        // larger amplitudes give an octave more influence over the elevation
+        total += noise * amplitude;
+        totalAmplitude += amplitude;
+
+        // the next octave has smaller features and normally less influence
+        frequency *= settings.lacunarity;
+        amplitude *= settings.persistence;
+    }
+
+    // convert the weighted sum back into a normalized elevation value
+    return total / totalAmplitude;
+}
+
 }
