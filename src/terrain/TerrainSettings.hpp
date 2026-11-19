@@ -9,8 +9,8 @@ struct TerrainThresholds {
 };
 
 struct TerrainSettings {
-    int width = 256;
-    int height = 256;
+    int width = 512;
+    int height = 512;
     unsigned int seed = 1;
 
     // size of terrain features, lower means larger continents
