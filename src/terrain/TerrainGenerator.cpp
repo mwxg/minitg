@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <stdexcept>
 
 namespace {
 
@@ -129,6 +130,70 @@ float sampleFractalNoise(float x, float y, const TerrainSettings& settings) noex
 
     // convert the weighted sum back into a normalized elevation value
     return total / totalAmplitude;
+}
+
+void validateTerrainSettings(const TerrainSettings& settings) {
+    if (settings.width <= 0 || settings.height <= 0) {
+        throw std::invalid_argument(
+            "Terrain dimensions must be positive"
+        );
+    }
+
+    if (!std::isfinite(settings.frequency) ||
+        settings.frequency <= 0.0f) {
+        throw std::invalid_argument(
+            "Terrain frequency must be positive and finite"
+        );
+    }
+
+    if (settings.octaves <= 0) {
+        throw std::invalid_argument(
+            "Terrain must have at least one octave"
+        );
+    }
+
+    if (!std::isfinite(settings.persistence) ||
+        settings.persistence < 0.0f ||
+        settings.persistence > 1.0f) {
+        throw std::invalid_argument(
+            "Terrain persistence must be between 0 and 1"
+        );
+    }
+
+    if (!std::isfinite(settings.lacunarity) ||
+        settings.lacunarity < 1.0f) {
+        throw std::invalid_argument(
+            "Terrain lacunarity must be at least 1"
+        );
+    }
+
+    const TerrainThresholds& thresholds = settings.thresholds;
+
+    if (!std::isfinite(thresholds.deepWater) ||
+        !std::isfinite(thresholds.water) ||
+        !std::isfinite(thresholds.sand) ||
+        !std::isfinite(thresholds.grass) ||
+        !std::isfinite(thresholds.rock)) {
+        throw std::invalid_argument(
+            "Terrain thresholds must be finite"
+        );
+    }
+
+    if (thresholds.deepWater < 0.0f ||
+        thresholds.rock > 1.0f) {
+        throw std::invalid_argument(
+            "Terrain thresholds must be between 0 and 1"
+        );
+    }
+
+    if (!(thresholds.deepWater < thresholds.water &&
+          thresholds.water < thresholds.sand &&
+          thresholds.sand < thresholds.grass &&
+          thresholds.grass < thresholds.rock)) {
+        throw std::invalid_argument(
+            "Terrain thresholds must be strictly increasing"
+        );
+    }
 }
 
 }
