@@ -198,7 +198,7 @@ void validateTerrainSettings(const TerrainSettings& settings) {
 
 } // namespace
 
-TerrainMap generateTerrain(const TerrainSettings settings) {
+TerrainMap generateTerrain(const TerrainSettings& settings) {
     validateTerrainSettings(settings);
 
     TerrainMap map(settings);
