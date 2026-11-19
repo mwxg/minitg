@@ -4,7 +4,7 @@
 
 #include <cmath>
 #include <cstdint>
-#include <stdexcept>
+#include <limits>
 
 namespace {
 
@@ -39,6 +39,18 @@ std::uint32_t hashCoordinates(
     // This is a coordinate hash, not a stateful random-number generator: the
     // same (x, y, seed) always returns the same value, independent of call order.
     return hash;
+}
+
+// normalize hash to [0, 1]
+float hashToUnitFloat(std::uint32_t hash) noexcept {
+    constexpr double maxHash = static_cast<double>(std::numeric_limits<std::uint32_t>::max());
+
+    // perform division as double so the normalization is more accurate
+    return static_cast<float>(static_cast<double>(hash) / maxHash);
+}
+
+float latticeValue(int x, int y, std::uint32_t seed) noexcept {
+    return hashToUnitFloat(hashCoordinates(x, y, seed));
 }
 
 }
