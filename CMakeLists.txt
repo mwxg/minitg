@@ -18,12 +18,14 @@ FetchContent_MakeAvailable(raylib)
 add_executable(minitg
     src/main.cpp
     src/terrain/TerrainMap.cpp
+    src/terrain/TerrainClassifier.cpp
 )
 
 target_sources(minitg PRIVATE
     src/terrain/TerrainMap.hpp
     src/terrain/TerrainSettings.hpp
     src/terrain/TerrainType.hpp
+    src/terrain/TerrainClassifier.hpp
 )
 
 target_link_libraries(minitg PRIVATE raylib)
