@@ -53,4 +53,49 @@ float latticeValue(int x, int y, std::uint32_t seed) noexcept {
     return hashToUnitFloat(hashCoordinates(x, y, seed));
 }
 
+// nonlinearly remap position so the transition between 
+// lattice points is an eased one
+// leave starting point slow, speed up, slow down before reaching second point
+float fade(float t) noexcept {
+    return t * t * (3.0f - 2.0f * t);
+}
+
+// ex. lerp(0.2f, 0.8f, 0.5f) == 0.5 (linear interpolation)
+float lerp(float a, float b, float t) noexcept {
+    return a + (b - a) * t;
+}
+
+float sampleValueNoise(float x, float y, std::uint32_t seed) noexcept {
+    
+    // find the surrounding lattice square
+    const int x0 = static_cast<int>(std::floor(x));
+    const int y0 = static_cast<int>(std::floor(y));
+    const int x1 = x0 + 1;
+    const int y1 = y0 + 1;
+
+    // find local position inside the lattice square
+    const float localX = x - static_cast<float>(x0);
+    const float localY = y - static_cast<float>(y0);
+
+    const float blendX = fade(localX);
+    const float blendY = fade(localY);
+
+    const float value00 = latticeValue(x0, y0, seed);
+    const float value10 = latticeValue(x1, y0, seed);
+    const float value01 = latticeValue(x0, y1, seed);
+    const float value11 = latticeValue(x1, y1, seed);
+
+    // top and bottom row of box
+    /*
+    value00 ─────── row0 ───────── value10
+
+    value01 ─────── row1 ───────── value11
+    */
+    const float row0 = lerp(value00, value10, blendX);
+    const float row1 = lerp(value01, value11, blendX);
+
+    // blend the two row results 
+    return lerp(row0, row1, blendY);
+}
+
 }
