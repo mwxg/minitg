@@ -3,4 +3,4 @@
 #include "TerrainMap.hpp"
 #include "TerrainSettings.hpp"
 
-[[nodiscard]] TerrainMap generateTerrain(const TerrainSettings& settings);
+TerrainMap generateTerrain(const TerrainSettings& settings);
