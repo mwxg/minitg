@@ -19,6 +19,7 @@ add_executable(minitg
     src/main.cpp
     src/terrain/TerrainMap.cpp
     src/terrain/TerrainClassifier.cpp
+    src/terrain/TerrainGenerator.cpp
 )
 
 target_sources(minitg PRIVATE
@@ -26,6 +27,7 @@ target_sources(minitg PRIVATE
     src/terrain/TerrainSettings.hpp
     src/terrain/TerrainType.hpp
     src/terrain/TerrainClassifier.hpp
+    src/terrain/TerrainGenerator.hpp
 )
 
 target_link_libraries(minitg PRIVATE raylib)
