@@ -6,7 +6,6 @@ struct TerrainThresholds {
     float sand = 0.45f;
     float grass = 0.70f;
     float rock = 0.85f;
-    float snow = 0.95f;
 };
 
 struct TerrainSettings {
