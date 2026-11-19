@@ -196,4 +196,26 @@ void validateTerrainSettings(const TerrainSettings& settings) {
     }
 }
 
+} // namespace
+
+TerrainMap generateTerrain(const TerrainSettings settings) {
+    validateTerrainSettings(settings);
+
+    TerrainMap map(settings);
+
+    for (int y = 0; y < map.height(); y++) {
+        for (int x = 0; x < map.width(); x++) {
+            const float elevation = sampleFractalNoise(
+                static_cast<float>(x),
+                static_cast<float>(y),
+                settings
+            );
+
+            TerrainCell& cell = map.at(x, y);
+            cell.elevation = elevation;
+            cell.type = classifyTerrain(elevation, settings.thresholds);
+        }
+    }
+
+    return map;
 }
