@@ -5,6 +5,7 @@ project(minitg VERSION 0.1.0 LANGUAGES CXX)
 include(FetchContent)
 
 set(RAYLIB_VERSION 6.2)
+set(RAYGUI_VERSION 5.0)
 
 FetchContent_Declare(
     raylib
@@ -12,8 +13,13 @@ FetchContent_Declare(
     DOWNLOAD_EXTRACT_TIMESTAMP OFF
     FIND_PACKAGE_ARGS
 )
+FetchContent_Declare(
+    raygui
+    URL https://github.com/raysan5/raygui/archive/refs/tags/${RAYGUI_VERSION}.tar.gz
+    DOWNLOAD_EXTRACT_TIMESTAMP OFF
+)
 
-FetchContent_MakeAvailable(raylib)
+FetchContent_MakeAvailable(raylib raygui)
 
 add_executable(minitg
     src/main.cpp
