@@ -1,17 +1,24 @@
 #include <raylib.h>
 
+#include "gui/TerrainSettingsPanel.hpp"
 #include "rendering/TerrainRenderer.hpp"
 #include "terrain/TerrainGenerator.hpp"
-#include "gui/TerrainSettingsPanel.hpp"
 
 int main()
 {
-    constexpr int screenWidth = 1080;
-    constexpr int screenHeight = 1080;
+    constexpr int screenWidth = 1600;
+    constexpr int screenHeight = 1200;
+    constexpr int minimumTerrainWidth = 320;
+    constexpr int minimumWindowHeight = 480;
+    constexpr float sidebarWidth = 320.0f;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
     InitWindow(screenWidth, screenHeight, "MiniTG");
+    SetWindowMinSize(
+        minimumTerrainWidth + static_cast<int>(sidebarWidth),
+        minimumWindowHeight
+    );
     SetTargetFPS(60);
 
     {
@@ -21,8 +28,6 @@ int main()
         TerrainMap map = generateTerrain(settings);
         TerrainRenderer renderer(map);
 
-        constexpr float sidebarWidth = 320.0f;
-
         while (!WindowShouldClose())
         {
             BeginDrawing();
@@ -31,17 +36,29 @@ int main()
             const int currentWidth = GetRenderWidth();
             const int currentHeight = GetRenderHeight();
 
+            const float terrainWidth =
+                static_cast<float>(currentWidth) - sidebarWidth;
+
+            const Rectangle terrainBounds{
+                0.0f,
+                0.0f,
+                terrainWidth,
+                static_cast<float>(currentHeight)
+            };
+
             const Rectangle sidebarBounds{
-                static_cast<float>(currentWidth) - sidebarWidth,
+                terrainWidth,
                 0.0f,
                 sidebarWidth,
                 static_cast<float>(currentHeight)
             };
 
+            renderer.draw(terrainBounds);
+
+            // draw GUI last so it remains above rendered content
             const bool generateRequested =
                 settingsPanel.draw(settings, sidebarBounds);
-
-            renderer.draw(currentWidth, currentHeight);
+            (void)generateRequested;
 
             EndDrawing();
         }

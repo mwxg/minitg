@@ -13,7 +13,7 @@ public:
     TerrainRenderer(const TerrainRenderer&) = delete;
     TerrainRenderer& operator=(const TerrainRenderer&) = delete;
 
-    void draw(int screenWidth, int screenHeight) const;
+    void draw(Rectangle viewport) const;
 
 private:
     // GPU texture owned by this renderer

@@ -53,11 +53,11 @@ TerrainRenderer::~TerrainRenderer()
     UnloadTexture(texture_);
 }
 
-void TerrainRenderer::draw(int screenWidth, int screenHeight) const
+void TerrainRenderer::draw(Rectangle viewport) const
 {
     const float scale = std::min(
-        static_cast<float>(screenWidth) / texture_.width,
-        static_cast<float>(screenHeight) / texture_.height
+        viewport.width / texture_.width,
+        viewport.height / texture_.height
     );
 
     const float drawWidth = texture_.width * scale;
@@ -71,8 +71,8 @@ void TerrainRenderer::draw(int screenWidth, int screenHeight) const
     };
 
     const Rectangle destination{
-        (screenWidth - drawWidth) / 2.0f,
-        (screenHeight - drawHeight) / 2.0f,
+        viewport.x + (viewport.width - drawWidth) / 2.0f,
+        viewport.y + (viewport.height - drawHeight) / 2.0f,
         drawWidth,
         drawHeight
     };
