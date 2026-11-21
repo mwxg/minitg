@@ -8,6 +8,8 @@ int main()
     constexpr int screenWidth = 1080;
     constexpr int screenHeight = 1080;
 
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+
     InitWindow(screenWidth, screenHeight, "MiniTG");
     SetTargetFPS(60);
 
@@ -21,7 +23,10 @@ int main()
             BeginDrawing();
             ClearBackground(BLACK);
 
-            renderer.draw(screenWidth, screenHeight);
+            const int currentWidth = GetRenderWidth();
+            const int currentHeight = GetRenderHeight();
+
+            renderer.draw(currentWidth, currentHeight);
 
             EndDrawing();
         }
