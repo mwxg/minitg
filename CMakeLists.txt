@@ -24,6 +24,7 @@ FetchContent_MakeAvailable(raylib raygui)
 add_executable(minitg
     src/main.cpp
     src/gui/Raygui.cpp
+    src/gui/TerrainSettingsPanel.cpp
     src/rendering/TerrainRenderer.cpp
     src/terrain/TerrainMap.cpp
     src/terrain/TerrainClassifier.cpp
@@ -37,6 +38,7 @@ target_sources(minitg PRIVATE
     src/terrain/TerrainType.hpp
     src/terrain/TerrainClassifier.hpp
     src/terrain/TerrainGenerator.hpp
+    src/gui/TerrainSettingsPanel.hpp
 )
 
 target_include_directories(minitg PRIVATE
