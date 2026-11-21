@@ -2,7 +2,7 @@
 
 #include <raylib.h>
 
-#include "terrain/TerrainMap.hpp"
+#include "../terrain/TerrainMap.hpp"
 
 class TerrainRenderer {
 public:
