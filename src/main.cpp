@@ -22,10 +22,11 @@ int main()
     SetTargetFPS(60);
 
     {
-        TerrainSettings settings;
+        TerrainSettings activeSettings;
+        TerrainSettings draftSettings = activeSettings;
         TerrainSettingsPanel settingsPanel;
 
-        TerrainMap map = generateTerrain(settings);
+        TerrainMap map = generateTerrain(activeSettings);
         TerrainRenderer renderer(map);
 
         while (!WindowShouldClose())
@@ -56,9 +57,12 @@ int main()
             renderer.draw(terrainBounds);
 
             // draw GUI last so it remains above rendered content
-            const bool generateRequested =
-                settingsPanel.draw(settings, sidebarBounds);
-            (void)generateRequested;
+            const bool generateRequested = settingsPanel.draw(draftSettings, sidebarBounds);
+            
+            if (generateRequested) {
+                activeSettings = draftSettings;
+                // regenerate map and renderer here
+            }
 
             EndDrawing();
         }
