@@ -23,12 +23,14 @@ FetchContent_MakeAvailable(raylib raygui)
 
 add_executable(minitg
     src/main.cpp
+    src/rendering/TerrainRenderer.cpp
     src/terrain/TerrainMap.cpp
     src/terrain/TerrainClassifier.cpp
     src/terrain/TerrainGenerator.cpp
 )
 
 target_sources(minitg PRIVATE
+    src/rendering/TerrainRenderer.hpp
     src/terrain/TerrainMap.hpp
     src/terrain/TerrainSettings.hpp
     src/terrain/TerrainType.hpp
