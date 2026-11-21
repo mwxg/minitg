@@ -23,6 +23,7 @@ FetchContent_MakeAvailable(raylib raygui)
 
 add_executable(minitg
     src/main.cpp
+    src/gui/Raygui.cpp
     src/rendering/TerrainRenderer.cpp
     src/terrain/TerrainMap.cpp
     src/terrain/TerrainClassifier.cpp
@@ -38,6 +39,10 @@ target_sources(minitg PRIVATE
     src/terrain/TerrainGenerator.hpp
 )
 
+target_include_directories(minitg PRIVATE
+    ${raygui_SOURCE_DIR}/src
+)
+
 target_link_libraries(minitg PRIVATE raylib)
 
 target_compile_features(minitg PRIVATE cxx_std_20)
@@ -46,4 +51,16 @@ if(MSVC)
     target_compile_options(minitg PRIVATE /W4 /permissive-)
 else()
     target_compile_options(minitg PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+if(MSVC)
+    set_source_files_properties(
+        src/gui/Raygui.cpp
+        PROPERTIES COMPILE_OPTIONS "/wd4505"
+    )
+else()
+    set_source_files_properties(
+        src/gui/Raygui.cpp
+        PROPERTIES COMPILE_OPTIONS "-Wno-unused-function"
+    )
 endif()
