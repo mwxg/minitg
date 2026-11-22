@@ -134,9 +134,9 @@ float sampleFractalNoise(float x, float y, const TerrainSettings& settings) noex
 }
 
 void validateTerrainSettings(const TerrainSettings& settings) {
-    if (settings.width <= 0 || settings.height <= 0) {
+    if (settings.width < 2 || settings.height < 2) {
         throw std::invalid_argument(
-            "Terrain dimensions must be positive"
+            "Terrain dimensions must be at least 2"
         );
     }
 
@@ -227,11 +227,38 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
 
     for (int y = 0; y < map.height(); y++) {
         for (int x = 0; x < map.width(); x++) {
-            const float elevation = sampleFractalNoise(
+            float elevation = sampleFractalNoise(
                 static_cast<float>(x),
                 static_cast<float>(y),
                 settings
             );
+
+            if (settings.islandFalloffEnabled) {
+                // map coordinates to a centered range
+                const float normalizedX =
+                    (2.0f * static_cast<float>(x) /
+                     static_cast<float>(map.width() - 1)) - 1.0f;
+                const float normalizedY =
+                    (2.0f * static_cast<float>(y) /
+                     static_cast<float>(map.height() - 1)) - 1.0f;
+
+                const float distanceFromCenter = std::sqrt(
+                    normalizedX * normalizedX +
+                    normalizedY * normalizedY
+                );
+
+                const float falloff = smoothstep(
+                    settings.islandRadius,
+                    1.0f,
+                    distanceFromCenter
+                );
+
+                elevation = std::clamp(
+                    elevation - falloff * settings.islandFalloffStrength,
+                    0.0f,
+                    1.0f
+                );
+            }
 
             TerrainCell& cell = map.at(x, y);
             cell.elevation = elevation;
