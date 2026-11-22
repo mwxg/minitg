@@ -9,7 +9,8 @@ public:
     bool draw(TerrainSettings& settings, Rectangle bounds);
 
 private:
-    bool mapSizeEditMode_ = false;
+    bool widthEditMode_ = false;
+    bool heightEditMode_ = false;
     bool seedEditMode_ = false;
     bool octavesEditMode_ = false;
 };
