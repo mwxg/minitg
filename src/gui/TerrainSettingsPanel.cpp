@@ -8,10 +8,10 @@
 bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds) {
     GuiPanel(bounds, "Terrain Settings");
 
-    constexpr float padding = 16.0f;
-    constexpr float controlHeight = 28.0f;
-    constexpr float rowSpacing = 8.0f;
-    constexpr float labelWidth = 92.0f;
+    constexpr float padding = 20.0f;
+    constexpr float controlHeight = 36.0f;
+    constexpr float rowSpacing = 10.0f;
+    constexpr float labelWidth = 120.0f;
     constexpr int minimumMapSize = 64;
     constexpr int maximumMapSize = 2048;
 
@@ -20,7 +20,7 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
     const float controlX = contentX + labelWidth;
     const float inputWidth = contentWidth - labelWidth;
 
-    float currentY = bounds.y + 40.0f;
+    float currentY = bounds.y + 52.0f;
 
     const auto drawLabel = [&](const char* text) {
         GuiLabel(

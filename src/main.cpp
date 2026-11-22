@@ -1,4 +1,5 @@
 #include <raylib.h>
+#include <raygui.h>
 
 #include "gui/TerrainSettingsPanel.hpp"
 #include "rendering/TerrainRenderer.hpp"
@@ -10,11 +11,12 @@ int main()
     constexpr int screenHeight = 1200;
     constexpr int minimumTerrainWidth = 320;
     constexpr int minimumWindowHeight = 480;
-    constexpr float sidebarWidth = 320.0f;
+    constexpr float sidebarWidth = 400.0f;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
     InitWindow(screenWidth, screenHeight, "MiniTG");
+    GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
     SetWindowMinSize(
         minimumTerrainWidth + static_cast<int>(sidebarWidth),
         minimumWindowHeight
