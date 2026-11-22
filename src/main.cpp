@@ -17,7 +17,6 @@ int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
     InitWindow(screenWidth, screenHeight, "MiniTG");
-    GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
     SetWindowMinSize(
         minimumTerrainWidth + static_cast<int>(sidebarWidth),
         minimumWindowHeight
@@ -30,7 +29,7 @@ int main() {
 
     Font uiFont = LoadFontEx(
         fontPath.string().c_str(),
-        32,
+        64,
         nullptr,
         0
     );
@@ -41,7 +40,7 @@ int main() {
         TraceLog(LOG_WARNING, "Failed to load UI font: %s", fontPath.string().c_str());
     }
 
-    GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
+    GuiSetStyle(DEFAULT, TEXT_SIZE, 28);
 
     {
         TerrainSettings activeSettings;
