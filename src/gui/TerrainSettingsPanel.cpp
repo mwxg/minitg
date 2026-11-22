@@ -15,7 +15,7 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
     constexpr float sliderValueWidth = 80.0f;
     constexpr float sliderValueGap = 10.0f;
     constexpr int minimumMapSize = 64;
-    constexpr int maximumMapSize = 2048;
+    constexpr int maximumMapSize = 8192;
 
     const float contentX = bounds.x + padding;
     const float contentWidth = bounds.width - padding * 2.0f;
