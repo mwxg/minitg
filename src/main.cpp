@@ -2,6 +2,11 @@
 #include <raygui.h>
 
 #include <filesystem>
+#include <chrono>
+#include <future>
+#include <optional>
+#include <string>
+#include <memory>
 
 #include "gui/TerrainSettingsPanel.hpp"
 #include "rendering/TerrainRenderer.hpp"
@@ -48,7 +53,11 @@ int main() {
         TerrainSettingsPanel settingsPanel;
 
         TerrainMap map = generateTerrain(activeSettings);
-        TerrainRenderer renderer(map);
+        auto renderer = std::make_unique<TerrainRenderer>(map);
+
+        std::future<TerrainMap> generationFuture;
+        std::optional<TerrainSettings> pendingSettings;
+        std::string generationError;
 
         while (!WindowShouldClose())
         {
@@ -75,7 +84,7 @@ int main() {
                 static_cast<float>(currentHeight)
             };
 
-            renderer.draw(terrainBounds);
+            renderer->draw(terrainBounds);
 
             // draw GUI last so it remains above rendered content
             const bool generateRequested = settingsPanel.draw(draftSettings, sidebarBounds);
