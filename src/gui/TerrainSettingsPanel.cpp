@@ -137,6 +137,23 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
     );
     advanceRow();
 
+    drawLabel("Island Falloff");
+    GuiCheckBox(
+        Rectangle{
+            controlX,
+            currentY,
+            controlHeight,
+            controlHeight
+        },
+        nullptr,
+        &draftSettings.islandFalloffEnabled
+    );
+    advanceRow();
+
+    if (!draftSettings.islandFalloffEnabled) {
+        GuiDisable();
+    }
+
     drawLabel("Island Radius");
     GuiSliderBar(
         Rectangle{
@@ -168,6 +185,10 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
         1.0f
     );
     advanceRow();
+
+    if (!draftSettings.islandFalloffEnabled) {
+        GuiEnable();
+    }
 
     currentY += 4.0f;
 
