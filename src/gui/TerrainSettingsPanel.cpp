@@ -11,7 +11,7 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
     constexpr float padding = 20.0f;
     constexpr float controlHeight = 36.0f;
     constexpr float rowSpacing = 10.0f;
-    constexpr float labelWidth = 120.0f;
+    constexpr float labelWidth = 200.0f;
     constexpr float sliderValueWidth = 80.0f;
     constexpr float sliderValueGap = 10.0f;
     constexpr int minimumMapSize = 64;
@@ -137,7 +137,7 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
     );
     advanceRow();
 
-    drawLabel("Island Falloff");
+    drawLabel("Falloff");
     GuiCheckBox(
         Rectangle{
             controlX,
@@ -154,7 +154,7 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
         GuiDisable();
     }
 
-    drawLabel("Island Radius");
+    drawLabel("Radius");
     GuiSliderBar(
         Rectangle{
             controlX,
@@ -170,7 +170,7 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
     );
     advanceRow();
 
-    drawLabel("Island Falloff Strength");
+    drawLabel("Falloff Strength");
     GuiSliderBar(
         Rectangle{
             controlX,

@@ -17,7 +17,7 @@ int main() {
     constexpr int screenHeight = 1200;
     constexpr int minimumTerrainWidth = 320;
     constexpr int minimumWindowHeight = 480;
-    constexpr float sidebarWidth = 400.0f;
+    constexpr float sidebarWidth = 500.0f;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
