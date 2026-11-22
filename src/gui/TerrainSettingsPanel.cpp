@@ -12,6 +12,8 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
     constexpr float controlHeight = 36.0f;
     constexpr float rowSpacing = 10.0f;
     constexpr float labelWidth = 120.0f;
+    constexpr float sliderValueWidth = 80.0f;
+    constexpr float sliderValueGap = 10.0f;
     constexpr int minimumMapSize = 64;
     constexpr int maximumMapSize = 2048;
 
@@ -77,7 +79,12 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
 
     drawLabel("Frequency");
     GuiSliderBar(
-        Rectangle{controlX, currentY, inputWidth, controlHeight},
+        Rectangle{
+            controlX,
+            currentY,
+            inputWidth - sliderValueWidth - sliderValueGap,
+            controlHeight
+        },
         nullptr,
         TextFormat("%.3f", draftSettings.frequency),
         &draftSettings.frequency,
@@ -100,7 +107,12 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
 
     drawLabel("Persistence");
     GuiSliderBar(
-        Rectangle{controlX, currentY, inputWidth, controlHeight},
+        Rectangle{
+            controlX,
+            currentY,
+            inputWidth - sliderValueWidth - sliderValueGap,
+            controlHeight
+        },
         nullptr,
         TextFormat("%.2f", draftSettings.persistence),
         &draftSettings.persistence,
@@ -111,7 +123,12 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
 
     drawLabel("Lacunarity");
     GuiSliderBar(
-        Rectangle{controlX, currentY, inputWidth, controlHeight},
+        Rectangle{
+            controlX,
+            currentY,
+            inputWidth - sliderValueWidth - sliderValueGap,
+            controlHeight
+        },
         nullptr,
         TextFormat("%.2f", draftSettings.lacunarity),
         &draftSettings.lacunarity,
