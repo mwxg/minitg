@@ -47,6 +47,14 @@ int main() {
 
     GuiSetStyle(DEFAULT, TEXT_SIZE, 28);
 
+    // green colors for the gui
+    GuiSetStyle(DEFAULT, BORDER_COLOR_FOCUSED, 0x3F8F5FFF);
+    GuiSetStyle(DEFAULT, BASE_COLOR_FOCUSED, 0xCDEBD7FF);
+    GuiSetStyle(DEFAULT, TEXT_COLOR_FOCUSED, 0x245C3AFF);
+    GuiSetStyle(DEFAULT, BORDER_COLOR_PRESSED, 0x287A48FF);
+    GuiSetStyle(DEFAULT, BASE_COLOR_PRESSED, 0x8FD3A8FF);
+    GuiSetStyle(DEFAULT, TEXT_COLOR_PRESSED, 0x174A2DFF);
+
     {
         TerrainSettings activeSettings;
         TerrainSettings draftSettings = activeSettings;
