@@ -49,6 +49,13 @@ target_link_libraries(minitg PRIVATE raylib)
 
 target_compile_features(minitg PRIVATE cxx_std_20)
 
+add_custom_command(TARGET minitg POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/assets"
+        "$<TARGET_FILE_DIR:minitg>/assets"
+    COMMENT "Copying runtime assets"
+)
+
 if(MSVC)
     target_compile_options(minitg PRIVATE /W4 /permissive-)
 else()

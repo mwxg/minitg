@@ -1,12 +1,13 @@
 #include <raylib.h>
 #include <raygui.h>
 
+#include <filesystem>
+
 #include "gui/TerrainSettingsPanel.hpp"
 #include "rendering/TerrainRenderer.hpp"
 #include "terrain/TerrainGenerator.hpp"
 
-int main()
-{
+int main() {
     constexpr int screenWidth = 1600;
     constexpr int screenHeight = 1200;
     constexpr int minimumTerrainWidth = 320;
@@ -22,6 +23,25 @@ int main()
         minimumWindowHeight
     );
     SetTargetFPS(60);
+
+    const std::filesystem::path fontPath =
+        std::filesystem::path(GetApplicationDirectory()) /
+        "assets" / "fonts" / "Quantico-Regular.ttf";
+
+    Font uiFont = LoadFontEx(
+        fontPath.string().c_str(),
+        32,
+        nullptr,
+        0
+    );
+
+    if (IsFontValid(uiFont)) {
+        GuiSetFont(uiFont);
+    } else {
+        TraceLog(LOG_WARNING, "Failed to load UI font: %s", fontPath.string().c_str());
+    }
+
+    GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
 
     {
         TerrainSettings activeSettings;
@@ -68,6 +88,10 @@ int main()
 
             EndDrawing();
         }
+    }
+
+    if (IsFontValid(uiFont)) {
+        UnloadFont(uiFont);
     }
 
     CloseWindow();
