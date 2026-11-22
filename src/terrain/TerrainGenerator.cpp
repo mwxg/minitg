@@ -167,6 +167,22 @@ void validateTerrainSettings(const TerrainSettings& settings) {
         );
     }
 
+    if (!std::isfinite(settings.islandRadius) ||
+        settings.islandRadius <= 0.0f ||
+        settings.islandRadius >= 1.0f) {
+        throw std::invalid_argument(
+            "Island radius must be between 0 and 1"
+        );
+    }
+
+    if (!std::isfinite(settings.islandFalloffStrength) ||
+        settings.islandFalloffStrength < 0.0f ||
+        settings.islandFalloffStrength > 1.0f) {
+        throw std::invalid_argument(
+            "Island falloff strength must be between 0 and 1"
+        );
+    }
+
     const TerrainThresholds& thresholds = settings.thresholds;
 
     if (!std::isfinite(thresholds.deepWater) ||

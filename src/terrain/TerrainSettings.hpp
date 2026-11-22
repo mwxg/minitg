@@ -25,5 +25,13 @@ struct TerrainSettings {
     // how quickly each layer becomes more detailed
     float lacunarity = 2.0f;
 
+    bool islandFalloffEnabled = true;
+
+    // where elevation reduction begins
+    float islandRadius = 0.65f;
+
+    // maximum amount removed from elevation
+    float islandFalloffStrength = 0.6f;
+
     TerrainThresholds thresholds;
 };

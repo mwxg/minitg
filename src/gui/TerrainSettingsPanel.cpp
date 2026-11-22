@@ -137,6 +137,38 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
     );
     advanceRow();
 
+    drawLabel("Island Radius");
+    GuiSliderBar(
+        Rectangle{
+            controlX,
+            currentY,
+            inputWidth - sliderValueWidth - sliderValueGap,
+            controlHeight
+        },
+        nullptr,
+        TextFormat("%.2f", draftSettings.islandRadius),
+        &draftSettings.islandRadius,
+        0.01f,
+        0.99f
+    );
+    advanceRow();
+
+    drawLabel("Island Falloff Strength");
+    GuiSliderBar(
+        Rectangle{
+            controlX,
+            currentY,
+            inputWidth - sliderValueWidth - sliderValueGap,
+            controlHeight
+        },
+        nullptr,
+        TextFormat("%.2f", draftSettings.islandFalloffStrength),
+        &draftSettings.islandFalloffStrength,
+        0.0f,
+        1.0f
+    );
+    advanceRow();
+
     currentY += 4.0f;
 
     const bool resetPressed = GuiButton(
