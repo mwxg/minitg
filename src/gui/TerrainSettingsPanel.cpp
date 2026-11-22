@@ -139,6 +139,26 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
 
     currentY += 4.0f;
 
+    const bool resetPressed = GuiButton(
+        Rectangle{
+            contentX,
+            currentY,
+            contentWidth,
+            controlHeight
+        },
+        "Reset to Defaults"
+    );
+
+    if (resetPressed) {
+        draftSettings = TerrainSettings{};
+        widthEditMode_ = false;
+        heightEditMode_ = false;
+        seedEditMode_ = false;
+        octavesEditMode_ = false;
+    }
+
+    advanceRow();
+
     const bool applyPressed = GuiButton(
         Rectangle{
             contentX,
