@@ -61,6 +61,31 @@ int main() {
 
         while (!WindowShouldClose())
         {
+            // poll for completion without blocking
+            if (
+                generationFuture.valid() &&
+                generationFuture.wait_for(std::chrono::milliseconds{0}) ==
+                std::future_status::ready
+            ) {
+                try {
+                    // retrieve the completed map
+                    TerrainMap newMap = generationFuture.get();
+
+                    // create GPU resources on the main thread
+                    auto newRenderer = std::make_unique<TerrainRenderer>(newMap);
+
+                    // install the completed terrain state
+                    map = std::move(newMap);
+                    renderer = std::move(newRenderer);
+
+                    activeSettings = pendingSettings.value();
+                    pendingSettings.reset();
+                } catch (const std::exception& error) {
+                    generationError = error.what();
+                    pendingSettings.reset();
+                }
+            }
+
             BeginDrawing();
             ClearBackground(BLACK);
 
@@ -84,14 +109,26 @@ int main() {
                 static_cast<float>(currentHeight)
             };
 
+            // draw the current terrain while generation runs
             renderer->draw(terrainBounds);
 
             // draw GUI last so it remains above rendered content
             const bool generateRequested = settingsPanel.draw(draftSettings, sidebarBounds);
             
-            if (generateRequested) {
-                activeSettings = draftSettings;
-                // regenerate map and renderer here
+            if (generateRequested && !generationFuture.valid()) {
+                // snapshot the requested settings
+                const TerrainSettings requestedSettings = draftSettings;
+                pendingSettings = requestedSettings;
+
+                generationError.clear();
+
+                // launch generation in the background
+                generationFuture = std::async(
+                    std::launch::async,
+                    [requestedSettings]() {
+                        return generateTerrain(requestedSettings);
+                    }
+                );
             }
 
             EndDrawing();
