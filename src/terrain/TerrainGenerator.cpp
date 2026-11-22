@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <limits>
 #include <stdexcept>
+#include <algorithm>
 
 namespace {
 
@@ -210,6 +211,11 @@ void validateTerrainSettings(const TerrainSettings& settings) {
             "Terrain thresholds must be strictly increasing"
         );
     }
+}
+
+float smoothstep(float edge0, float edge1, float value) noexcept {
+    const float t = std::clamp((value - edge0) / (edge1 - edge0), 0.0f, 1.0f);
+    return t * t * (3.0f - 2.0f * t);
 }
 
 } // namespace
