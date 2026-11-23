@@ -93,11 +93,13 @@ add_custom_command(TARGET minitg POST_BUILD
 install(
     TARGETS minitg
     RUNTIME DESTINATION .
+    COMPONENT Runtime
 )
 
 install(
     DIRECTORY "${CMAKE_SOURCE_DIR}/assets"
     DESTINATION .
+    COMPONENT Runtime
 )
 
 if(MSVC)
@@ -135,6 +137,19 @@ set(CPACK_PACKAGE_EXECUTABLES
     "minitg" "MiniTG"
 )
 
+# MiniTG is installed directly in the installation root, not bin/
+set(CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
+
+# create a desktop shortcut during installation and remove it during
+# uninstallation. Using explicit NSIS commands avoids depending on CPack's
+# optional desktop-shortcut page.
+set(CPACK_NSIS_CREATE_ICONS_EXTRA
+    "CreateShortCut \\\"$DESKTOP\\\\MiniTG.lnk\\\" \\\"$INSTDIR\\\\minitg.exe\\\""
+)
+set(CPACK_NSIS_DELETE_ICONS_EXTRA
+    "Delete \\\"$DESKTOP\\\\MiniTG.lnk\\\""
+)
+
 set(CPACK_GENERATOR "ZIP;NSIS")
 
 set(CPACK_NSIS_DISPLAY_NAME "MiniTG")
@@ -145,5 +160,7 @@ set(CPACK_NSIS_MUI_ICON
 set(CPACK_NSIS_MUI_UNIICON
     "${CMAKE_SOURCE_DIR}/resources/windows/minitgLogo.ico"
 )
+
+set(CPACK_COMPONENTS_ALL Runtime)
 
 include(CPack)
