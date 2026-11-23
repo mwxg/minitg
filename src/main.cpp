@@ -70,8 +70,7 @@ int main() {
 
         TerrainView terrainView = TerrainView::Terrain;
 
-        while (!WindowShouldClose())
-        {
+        while (!WindowShouldClose()) {
             // poll for completion without blocking
             if (
                 generationFuture.valid() &&
