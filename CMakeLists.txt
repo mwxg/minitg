@@ -117,3 +117,33 @@ else()
         PROPERTIES COMPILE_OPTIONS "-Wno-unused-function"
     )
 endif()
+
+set(CPACK_PACKAGE_NAME "MiniTG")
+set(CPACK_PACKAGE_VENDOR "MiniTG")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY
+    "A top-down biome and terrain generator"
+)
+
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "MiniTG")
+set(CPACK_PACKAGE_FILE_NAME
+    "MiniTG-${PROJECT_VERSION}-win64"
+)
+
+# create a MiniTG shortcut in the Windows start menu
+set(CPACK_PACKAGE_EXECUTABLES
+    "minitg" "MiniTG"
+)
+
+set(CPACK_GENERATOR "ZIP;NSIS")
+
+set(CPACK_NSIS_DISPLAY_NAME "MiniTG")
+set(CPACK_NSIS_PACKAGE_NAME "MiniTG")
+set(CPACK_NSIS_MUI_ICON
+    "${CMAKE_SOURCE_DIR}/resources/windows/minitgLogo.ico"
+)
+set(CPACK_NSIS_MUI_UNIICON
+    "${CMAKE_SOURCE_DIR}/resources/windows/minitgLogo.ico"
+)
+
+include(CPack)
