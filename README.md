@@ -65,6 +65,9 @@ Elevation, moisture, and temperature are normalized to the range `0.00` to
 moisture and temperature thresholds can be changed in the terrain settings panel. `Any` means that
 the value does not affect that terrain type.
 
+You may notice that several terrain types share the same elevation ranges. This is because there are six "default" ones: Deep water, water, sand, grass, rock, and snow. The rest of the terrain types are essentially applied on top of them.
+e.g. grass + dry + cold = tundra.
+
 | Terrain type | Elevation | Moisture | Temperature |
 | --- | --- | --- | --- |
 | Deep water | `< 0.25` | Any | `>= 0.35` |
