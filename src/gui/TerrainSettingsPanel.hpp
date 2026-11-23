@@ -17,7 +17,9 @@ private:
     bool widthEditMode_ = false;
     bool heightEditMode_ = false;
     bool seedEditMode_ = false;
-    bool octavesEditMode_ = false;
+    bool elevationOctavesEditMode_ = false;
+    bool moistureOctavesEditMode_ = false;
     bool viewDropdownOpen_ = false;
     int viewSelection_ = 0;
+    Vector2 scrollOffset_{};
 };

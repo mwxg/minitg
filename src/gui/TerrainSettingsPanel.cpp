@@ -18,15 +18,99 @@ bool TerrainSettingsPanel::draw(
     constexpr float labelWidth = 200.0f;
     constexpr float sliderValueWidth = 80.0f;
     constexpr float sliderValueGap = 10.0f;
+    constexpr float sectionSpacing = 18.0f;
+    constexpr float sectionHeaderHeight = 28.0f;
+    constexpr float contentHeight = 1034.0f;
     constexpr int minimumMapSize = 64;
     constexpr int maximumMapSize = 8192;
 
-    const float contentX = bounds.x + padding;
-    const float contentWidth = bounds.width - padding * 2.0f;
+    const float fixedContentX = bounds.x + padding;
+    const float fixedContentWidth = bounds.width - padding * 2.0f;
+    float fixedY = bounds.y + 52.0f;
+
+    // fixed actions remain visible above scrolling settings
+    const bool applyPressed = GuiButton(
+        Rectangle{fixedContentX, fixedY, fixedContentWidth, controlHeight},
+        "Generate Terrain"
+    );
+    fixedY += controlHeight + rowSpacing;
+
+    const bool resetPressed = GuiButton(
+        Rectangle{fixedContentX, fixedY, fixedContentWidth, controlHeight},
+        "Reset to Defaults"
+    );
+
+    if (resetPressed) {
+        draftSettings = TerrainSettings{};
+        widthEditMode_ = false;
+        heightEditMode_ = false;
+        seedEditMode_ = false;
+        elevationOctavesEditMode_ = false;
+        moistureOctavesEditMode_ = false;
+    }
+
+    fixedY += controlHeight + rowSpacing;
+
+    const float fixedControlX = fixedContentX + labelWidth;
+    const float fixedInputWidth = fixedContentWidth - labelWidth;
+
+    GuiLabel(
+        Rectangle{fixedContentX, fixedY, labelWidth, controlHeight},
+        "View"
+    );
+
+    const Rectangle viewDropdownBounds{
+        fixedControlX,
+        fixedY,
+        fixedInputWidth,
+        controlHeight
+    };
+
+    fixedY += controlHeight + rowSpacing;
+
+    const Rectangle scrollBounds{
+        bounds.x + padding,
+        fixedY,
+        bounds.width - padding * 2.0f,
+        std::max(0.0f, bounds.y + bounds.height - fixedY - padding)
+    };
+    const Rectangle scrollContent{
+        0.0f,
+        0.0f,
+        scrollBounds.width - 16.0f,
+        contentHeight
+    };
+    Rectangle scrollView{};
+
+    GuiScrollPanel(
+        scrollBounds,
+        nullptr,
+        scrollContent,
+        &scrollOffset_,
+        &scrollView
+    );
+
+    // scrollable settings sections
+    BeginScissorMode(
+        static_cast<int>(scrollView.x),
+        static_cast<int>(scrollView.y),
+        static_cast<int>(scrollView.width),
+        static_cast<int>(scrollView.height)
+    );
+
+    const float contentX = scrollBounds.x + padding + scrollOffset_.x;
+    const float contentWidth = scrollContent.width - padding * 2.0f;
     const float controlX = contentX + labelWidth;
     const float inputWidth = contentWidth - labelWidth;
+    float currentY = scrollBounds.y + padding + scrollOffset_.y;
 
-    float currentY = bounds.y + 52.0f;
+    const auto drawSection = [&](const char* text) {
+        GuiLabel(
+            Rectangle{contentX, currentY, contentWidth, sectionHeaderHeight},
+            text
+        );
+        currentY += sectionHeaderHeight + rowSpacing;
+    };
 
     const auto drawLabel = [&](const char* text) {
         GuiLabel(
@@ -38,6 +122,32 @@ bool TerrainSettingsPanel::draw(
     const auto advanceRow = [&]() {
         currentY += controlHeight + rowSpacing;
     };
+
+    const auto drawSlider = [&](
+        const char* label,
+        const char* valueText,
+        float* value,
+        float minimum,
+        float maximum
+    ) {
+        drawLabel(label);
+        GuiSliderBar(
+            Rectangle{
+                controlX,
+                currentY,
+                inputWidth - sliderValueWidth - sliderValueGap,
+                controlHeight
+            },
+            nullptr,
+            valueText,
+            value,
+            minimum,
+            maximum
+        );
+        advanceRow();
+    };
+
+    drawSection("GENERAL");
 
     drawLabel("Width");
     if (GuiSpinner(
@@ -81,21 +191,16 @@ bool TerrainSettingsPanel::draw(
     draftSettings.elevationNoise.seed = static_cast<std::uint32_t>(seedValue);
     advanceRow();
 
-    drawLabel("Frequency");
-    GuiSliderBar(
-        Rectangle{
-            controlX,
-            currentY,
-            inputWidth - sliderValueWidth - sliderValueGap,
-            controlHeight
-        },
-        nullptr,
+    currentY += sectionSpacing;
+    drawSection("ELEVATION");
+
+    drawSlider(
+        "Frequency",
         TextFormat("%.3f", draftSettings.elevationNoise.frequency),
         &draftSettings.elevationNoise.frequency,
         0.001f,
         0.1f
     );
-    advanceRow();
 
     drawLabel("Octaves");
     if (GuiSpinner(
@@ -104,51 +209,84 @@ bool TerrainSettingsPanel::draw(
             &draftSettings.elevationNoise.octaves,
             1,
             10,
-            octavesEditMode_)) {
-        octavesEditMode_ = !octavesEditMode_;
+            elevationOctavesEditMode_)) {
+        elevationOctavesEditMode_ = !elevationOctavesEditMode_;
     }
     advanceRow();
 
-    drawLabel("Persistence");
-    GuiSliderBar(
-        Rectangle{
-            controlX,
-            currentY,
-            inputWidth - sliderValueWidth - sliderValueGap,
-            controlHeight
-        },
-        nullptr,
+    drawSlider(
+        "Persistence",
         TextFormat("%.2f", draftSettings.elevationNoise.persistence),
         &draftSettings.elevationNoise.persistence,
         0.0f,
         1.0f
     );
-    advanceRow();
-
-    drawLabel("Lacunarity");
-    GuiSliderBar(
-        Rectangle{
-            controlX,
-            currentY,
-            inputWidth - sliderValueWidth - sliderValueGap,
-            controlHeight
-        },
-        nullptr,
+    drawSlider(
+        "Lacunarity",
         TextFormat("%.2f", draftSettings.elevationNoise.lacunarity),
         &draftSettings.elevationNoise.lacunarity,
         1.0f,
         4.0f
     );
+
+    currentY += sectionSpacing;
+    drawSection("MOISTURE");
+
+    drawSlider(
+        "Frequency",
+        TextFormat("%.3f", draftSettings.moistureNoise.frequency),
+        &draftSettings.moistureNoise.frequency,
+        0.001f,
+        0.1f
+    );
+
+    drawLabel("Octaves");
+    if (GuiSpinner(
+            Rectangle{controlX, currentY, inputWidth, controlHeight},
+            nullptr,
+            &draftSettings.moistureNoise.octaves,
+            1,
+            10,
+            moistureOctavesEditMode_)) {
+        moistureOctavesEditMode_ = !moistureOctavesEditMode_;
+    }
     advanceRow();
+
+    drawSlider(
+        "Persistence",
+        TextFormat("%.2f", draftSettings.moistureNoise.persistence),
+        &draftSettings.moistureNoise.persistence,
+        0.0f,
+        1.0f
+    );
+    drawSlider(
+        "Lacunarity",
+        TextFormat("%.2f", draftSettings.moistureNoise.lacunarity),
+        &draftSettings.moistureNoise.lacunarity,
+        1.0f,
+        4.0f
+    );
+    drawSlider(
+        "Dry Threshold",
+        TextFormat("%.2f", draftSettings.moistureThresholds.dry),
+        &draftSettings.moistureThresholds.dry,
+        0.0f,
+        1.0f
+    );
+    drawSlider(
+        "Wet Threshold",
+        TextFormat("%.2f", draftSettings.moistureThresholds.wet),
+        &draftSettings.moistureThresholds.wet,
+        0.0f,
+        1.0f
+    );
+
+    currentY += sectionSpacing;
+    drawSection("ISLAND");
 
     drawLabel("Falloff");
     GuiCheckBox(
-        Rectangle{
-            controlX,
-            currentY,
-            controlHeight,
-            controlHeight
-        },
+        Rectangle{controlX, currentY, controlHeight, controlHeight},
         nullptr,
         &draftSettings.islandFalloffEnabled
     );
@@ -158,79 +296,29 @@ bool TerrainSettingsPanel::draw(
         GuiDisable();
     }
 
-    drawLabel("Radius");
-    GuiSliderBar(
-        Rectangle{
-            controlX,
-            currentY,
-            inputWidth - sliderValueWidth - sliderValueGap,
-            controlHeight
-        },
-        nullptr,
+    drawSlider(
+        "Radius",
         TextFormat("%.2f", draftSettings.islandRadius),
         &draftSettings.islandRadius,
         0.01f,
         0.99f
     );
-    advanceRow();
-
-    drawLabel("Falloff Strength");
-    GuiSliderBar(
-        Rectangle{
-            controlX,
-            currentY,
-            inputWidth - sliderValueWidth - sliderValueGap,
-            controlHeight
-        },
-        nullptr,
+    drawSlider(
+        "Falloff Strength",
         TextFormat("%.2f", draftSettings.islandFalloffStrength),
         &draftSettings.islandFalloffStrength,
         0.0f,
         1.0f
     );
-    advanceRow();
 
     if (!draftSettings.islandFalloffEnabled) {
         GuiEnable();
     }
 
-    currentY += 4.0f;
+    EndScissorMode();
 
-    const bool resetPressed = GuiButton(
-        Rectangle{
-            contentX,
-            currentY,
-            contentWidth,
-            controlHeight
-        },
-        "Reset to Defaults"
-    );
-
-    if (resetPressed) {
-        draftSettings = TerrainSettings{};
-        widthEditMode_ = false;
-        heightEditMode_ = false;
-        seedEditMode_ = false;
-        octavesEditMode_ = false;
-    }
-
-    advanceRow();
-
-    const bool applyPressed = GuiButton(
-        Rectangle{
-            contentX,
-            currentY,
-            contentWidth,
-            controlHeight
-        },
-        "Generate Terrain"
-    );
-
-    advanceRow();
-
-    drawLabel("View");
     if (GuiDropdownBox(
-            Rectangle{controlX, currentY, inputWidth, controlHeight},
+            viewDropdownBounds,
             "Terrain;Moisture",
             &viewSelection_,
             viewDropdownOpen_)) {
