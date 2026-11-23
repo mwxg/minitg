@@ -222,6 +222,29 @@ void validateTerrainSettings(const TerrainSettings& settings) {
             "Terrain thresholds must be strictly increasing"
         );
     }
+
+    const MoistureThresholds& moistureThresholds =
+        settings.moistureThresholds;
+
+    if (!std::isfinite(moistureThresholds.dry) ||
+        !std::isfinite(moistureThresholds.wet)) {
+        throw std::invalid_argument(
+            "Moisture thresholds must be finite"
+        );
+    }
+
+    if (moistureThresholds.dry < 0.0f ||
+        moistureThresholds.wet > 1.0f) {
+        throw std::invalid_argument(
+            "Moisture thresholds must be between 0 and 1"
+        );
+    }
+
+    if (moistureThresholds.dry >= moistureThresholds.wet) {
+        throw std::invalid_argument(
+            "Moisture thresholds must be strictly increasing"
+        );
+    }
 }
 
 float smoothstep(float edge0, float edge1, float value) noexcept {
@@ -286,7 +309,12 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
             TerrainCell& cell = map.at(x, y);
             cell.elevation = elevation;
             cell.moisture = moisture;
-            cell.type = classifyTerrain(elevation, settings.thresholds);
+            cell.type = classifyTerrain(
+                elevation,
+                moisture,
+                settings.thresholds,
+                settings.moistureThresholds
+            );
         }
     }
 

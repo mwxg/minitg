@@ -12,8 +12,12 @@ Color terrainColor(TerrainType type) {
         return Color{35, 110, 180, 255};
     case TerrainType::Sand:
         return Color{220, 205, 140, 255};
+    case TerrainType::Desert:
+        return Color{205, 180, 105, 255};
     case TerrainType::Grass:
         return Color{70, 145, 75, 255};
+    case TerrainType::Forest:
+        return Color{35, 100, 50, 255};
     case TerrainType::Rock:
         return Color{115, 110, 105, 255};
     case TerrainType::Snow:

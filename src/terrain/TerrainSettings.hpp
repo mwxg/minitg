@@ -18,6 +18,11 @@ struct TerrainThresholds {
     float rock = 0.85f;
 };
 
+struct MoistureThresholds {
+    float dry = 0.35f;
+    float wet = 0.65f;
+};
+
 struct TerrainSettings {
     int width = 512;
     int height = 512;
@@ -41,4 +46,5 @@ struct TerrainSettings {
     float islandFalloffStrength = 0.6f;
 
     TerrainThresholds thresholds;
+    MoistureThresholds moistureThresholds;
 };

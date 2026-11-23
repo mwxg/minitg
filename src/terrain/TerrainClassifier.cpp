@@ -2,7 +2,9 @@
 
 TerrainType classifyTerrain(
     float elevation,
-    const TerrainThresholds& thresholds
+    float moisture,
+    const TerrainThresholds& thresholds,
+    const MoistureThresholds& moistureThresholds
 ) {
     if (elevation < thresholds.deepWater) {
         return TerrainType::DeepWater;
@@ -17,6 +19,14 @@ TerrainType classifyTerrain(
     }
 
     if (elevation < thresholds.grass) {
+        if (moisture < moistureThresholds.dry) {
+            return TerrainType::Desert;
+        }
+
+        if (moisture >= moistureThresholds.wet) {
+            return TerrainType::Forest;
+        }
+
         return TerrainType::Grass;
     }
 
