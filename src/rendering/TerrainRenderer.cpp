@@ -1,8 +1,17 @@
 #include "TerrainRenderer.hpp"
 
+#include "../terrain/TerrainClassifier.hpp"
+
 #include <algorithm>
+#include <cstdint>
 
 namespace {
+
+enum class MoistureBand : std::uint8_t {
+    Dry,
+    Moderate,
+    Wet
+};
 
 Color terrainColor(TerrainType type) {
     switch (type) {
@@ -40,9 +49,25 @@ Color moistureColor(MoistureBand band) {
     return MAGENTA; // unexpected values are visually obvious
 }
 
+MoistureBand classifyMoisture(
+    float moisture,
+    const MoistureThresholds& thresholds
+) noexcept {
+    if (moisture < thresholds.dry) {
+        return MoistureBand::Dry;
+    }
+    if (moisture >= thresholds.wet) {
+        return MoistureBand::Wet;
+    }
+    return MoistureBand::Moderate;
+}
+
 } // namespace
 
-TerrainRenderer::TerrainRenderer(const TerrainMap& map) {
+TerrainRenderer::TerrainRenderer(
+    const TerrainMap& map,
+    const TerrainSettings& settings
+) {
     Image terrainImage = GenImageColor(map.width(), map.height(), BLACK);
     Image moistureImage = GenImageColor(map.width(), map.height(), BLACK);
 
@@ -52,14 +77,23 @@ TerrainRenderer::TerrainRenderer(const TerrainMap& map) {
             const TerrainCell& cell = map.at(x, y);
 
             // regular terrain view
-            ImageDrawPixel(&terrainImage, x, y, terrainColor(cell.type));
+            const TerrainType type = classifyTerrain(
+                cell.elevation,
+                cell.moisture,
+                settings.thresholds,
+                settings.moistureThresholds
+            );
+            ImageDrawPixel(&terrainImage, x, y, terrainColor(type));
 
             // moisture view
             ImageDrawPixel(
                 &moistureImage,
                 x,
                 y,
-                moistureColor(cell.moistureBand)
+                moistureColor(classifyMoisture(
+                    cell.moisture,
+                    settings.moistureThresholds
+                ))
             );
         }
     }

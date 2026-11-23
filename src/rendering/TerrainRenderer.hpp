@@ -7,7 +7,7 @@
 
 class TerrainRenderer {
 public:
-    explicit TerrainRenderer(const TerrainMap& map);
+    TerrainRenderer(const TerrainMap& map, const TerrainSettings& settings);
     ~TerrainRenderer();
 
     // prevent multiple renderers from owning the same texture

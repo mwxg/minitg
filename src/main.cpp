@@ -62,7 +62,7 @@ int main() {
         TerrainSettingsPanel settingsPanel;
 
         TerrainMap map = generateTerrain(activeSettings);
-        auto renderer = std::make_unique<TerrainRenderer>(map);
+        auto renderer = std::make_unique<TerrainRenderer>(map, activeSettings);
 
         std::future<TerrainMap> generationFuture;
         std::optional<TerrainSettings> pendingSettings;
@@ -82,7 +82,10 @@ int main() {
                     TerrainMap newMap = generationFuture.get();
 
                     // create GPU resources on the main thread
-                    auto newRenderer = std::make_unique<TerrainRenderer>(newMap);
+                    auto newRenderer = std::make_unique<TerrainRenderer>(
+                        newMap,
+                        pendingSettings.value()
+                    );
 
                     // install the completed terrain state
                     map = std::move(newMap);
