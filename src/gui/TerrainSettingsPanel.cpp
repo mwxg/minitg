@@ -4,6 +4,21 @@
 
 #include <algorithm>
 #include <limits>
+#include <random>
+
+namespace {
+
+std::uint32_t randomSeed() {
+    static std::mt19937 generator{std::random_device{}()};
+    static std::uniform_int_distribution<std::uint32_t> distribution{
+        0,
+        static_cast<std::uint32_t>(std::numeric_limits<int>::max())
+    };
+
+    return distribution(generator);
+}
+
+} // namespace
 
 bool TerrainSettingsPanel::draw(
     TerrainSettings& draftSettings,
@@ -22,7 +37,7 @@ bool TerrainSettingsPanel::draw(
     constexpr float sliderValueGap = 10.0f;
     constexpr float sectionSpacing = 18.0f;
     constexpr float sectionHeaderHeight = 28.0f;
-    constexpr float contentHeight = 1550.0f;
+    constexpr float contentHeight = 1596.0f;
     constexpr float errorHeight = 72.0f;
     constexpr int minimumMapSize = 64;
     constexpr int maximumMapSize = 2048;
@@ -210,6 +225,14 @@ bool TerrainSettingsPanel::draw(
         seedEditMode_ = !seedEditMode_;
     }
     draftSettings.seed = static_cast<std::uint32_t>(seedValue);
+    advanceRow();
+
+    if (GuiButton(
+        Rectangle{controlX, currentY, inputWidth, controlHeight},
+        "Random Seed"
+        )) {
+        draftSettings.seed = randomSeed();
+    }
     advanceRow();
 
     currentY += sectionSpacing;
