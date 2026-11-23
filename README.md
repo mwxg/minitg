@@ -31,9 +31,9 @@ The terrain view uses the following colors:
 | <span style="display:inline-block;width:1.25em;height:1.25em;background:#CDB469;border:1px solid #777"></span> | Desert | `205, 180, 105` | `#CDB469` |
 | <span style="display:inline-block;width:1.25em;height:1.25em;background:#A5AF4B;border:1px solid #777"></span> | Savanna | `165, 175, 75` | `#A5AF4B` |
 | <span style="display:inline-block;width:1.25em;height:1.25em;background:#46914B;border:1px solid #777"></span> | Grass | `70, 145, 75` | `#46914B` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#236432;border:1px solid #777"></span> | Forest | `35, 100, 50` | `#236432` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#145528;border:1px solid #777"></span> | Rainforest | `20, 85, 40` | `#145528` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#2D5A41;border:1px solid #777"></span> | Taiga | `45, 90, 65` | `#2D5A41` |
+| <span style="display:inline-block;width:1.25em;height:1.25em;background:#196946;border:1px solid #777"></span> | Forest | `25, 105, 70` | `#196946` |
+| <span style="display:inline-block;width:1.25em;height:1.25em;background:#0A4B23;border:1px solid #777"></span> | Rainforest | `10, 75, 35` | `#0A4B23` |
+| <span style="display:inline-block;width:1.25em;height:1.25em;background:#376464;border:1px solid #777"></span> | Taiga | `55, 100, 100` | `#376464` |
 | <span style="display:inline-block;width:1.25em;height:1.25em;background:#96A087;border:1px solid #777"></span> | Tundra | `150, 160, 135` | `#96A087` |
 | <span style="display:inline-block;width:1.25em;height:1.25em;background:#736E69;border:1px solid #777"></span> | Rock | `115, 110, 105` | `#736E69` |
 | <span style="display:inline-block;width:1.25em;height:1.25em;background:#F0F5FA;border:1px solid #777"></span> | Snow | `240, 245, 250` | `#F0F5FA` |

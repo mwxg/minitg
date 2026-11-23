@@ -30,11 +30,11 @@ Color terrainColor(TerrainType type) {
     case TerrainType::Grass:
         return Color{70, 145, 75, 255};
     case TerrainType::Forest:
-        return Color{35, 100, 50, 255};
+        return Color{25, 105, 70, 255};
     case TerrainType::Rainforest:
-        return Color{20, 85, 40, 255};
+        return Color{10, 75, 35, 255};
     case TerrainType::Taiga:
-        return Color{45, 90, 65, 255};
+        return Color{55, 100, 100, 255};
     case TerrainType::Tundra:
         return Color{150, 160, 135, 255};
     case TerrainType::Rock:
