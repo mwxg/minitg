@@ -18,13 +18,13 @@ struct TerrainThresholds {
 };
 
 struct MoistureThresholds {
-    float dry = 0.35f;
+    float dry = 0.45f;
     float wet = 0.65f;
 };
 
 struct TemperatureThresholds {
     float cold = 0.35f;
-    float hot = 0.65f;
+    float hot = 0.50f;
 };
 
 struct TerrainSettings {
