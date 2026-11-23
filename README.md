@@ -102,3 +102,10 @@ cmake --preset debug
 cmake --build --preset debug
 .\build\debug\minitg.exe
 ```
+
+## License
+
+MiniTG is licensed under the [MIT License](LICENSE).
+
+MiniTG uses third-party software and assets distributed under their respective
+licenses. See [Third-party notices](THIRD_PARTY_NOTICES.md) for details.

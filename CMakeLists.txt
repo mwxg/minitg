@@ -102,6 +102,20 @@ install(
     COMPONENT Runtime
 )
 
+install(
+    FILES
+        "${CMAKE_SOURCE_DIR}/LICENSE"
+        "${CMAKE_SOURCE_DIR}/THIRD_PARTY_NOTICES.md"
+    DESTINATION .
+    COMPONENT Runtime
+)
+
+install(
+    DIRECTORY "${CMAKE_SOURCE_DIR}/licenses"
+    DESTINATION .
+    COMPONENT Runtime
+)
+
 if(MSVC)
     target_compile_options(minitg PRIVATE /W4 /permissive-)
 else()
