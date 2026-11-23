@@ -297,7 +297,10 @@ float smoothstep(float edge0, float edge1, float value) noexcept {
 
 } // namespace
 
-TerrainMap generateTerrain(const TerrainSettings& settings) {
+std::optional<TerrainMap> generateTerrain(
+    const TerrainSettings& settings,
+    std::stop_token stopToken
+) {
     validateTerrainSettings(settings);
 
     TerrainMap map(settings);
@@ -305,6 +308,10 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
     const std::uint32_t temperatureSeed = deriveTemperatureSeed(settings.seed);
 
     for (int y = 0; y < map.height(); y++) {
+        if (stopToken.stop_requested()) {
+            return std::nullopt;
+        }
+
         for (int x = 0; x < map.width(); x++) {
             float elevation = sampleFractalNoise(
                 static_cast<float>(x),
@@ -376,4 +383,8 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
     }
 
     return map;
+}
+
+TerrainMap generateTerrain(const TerrainSettings& settings) {
+    return generateTerrain(settings, {}).value();
 }

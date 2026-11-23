@@ -7,6 +7,7 @@
 #include <optional>
 #include <string>
 #include <memory>
+#include <thread>
 
 #include "gui/TerrainSettingsPanel.hpp"
 #include "rendering/TerrainRenderer.hpp"
@@ -64,7 +65,8 @@ int main() {
         TerrainMap map = generateTerrain(activeSettings);
         auto renderer = std::make_unique<TerrainRenderer>(map, activeSettings);
 
-        std::future<TerrainMap> generationFuture;
+        std::jthread generationThread;
+        std::future<std::optional<TerrainMap>> generationFuture;
         std::optional<TerrainSettings> pendingSettings;
         std::string generationError;
 
@@ -78,22 +80,26 @@ int main() {
                 std::future_status::ready
             ) {
                 try {
-                    // retrieve the completed map
-                    TerrainMap newMap = generationFuture.get();
+                    std::optional<TerrainMap> generatedMap = generationFuture.get();
+                    generationThread.join();
 
-                    // create GPU resources on the main thread
-                    auto newRenderer = std::make_unique<TerrainRenderer>(
-                        newMap,
-                        pendingSettings.value()
-                    );
+                    if (generatedMap) {
+                        // create gpu resources on the main thread
+                        auto newRenderer = std::make_unique<TerrainRenderer>(
+                            *generatedMap,
+                            pendingSettings.value()
+                        );
 
-                    // install the completed terrain state
-                    map = std::move(newMap);
-                    renderer = std::move(newRenderer);
+                        map = std::move(*generatedMap);
+                        renderer = std::move(newRenderer);
 
-                    activeSettings = pendingSettings.value();
+                        activeSettings = pendingSettings.value();
+                    }
                     pendingSettings.reset();
                 } catch (const std::exception& error) {
+                    if (generationThread.joinable()) {
+                        generationThread.join();
+                    }
                     generationError = error.what();
                     pendingSettings.reset();
                 }
@@ -126,7 +132,7 @@ int main() {
             renderer->draw(terrainBounds, terrainView);
 
             // draw GUI last so it remains above rendered content
-            const bool isGenerating = generationFuture.valid();
+            const bool isGenerating = generationThread.joinable();
             const bool generateRequested = settingsPanel.draw(
                 draftSettings,
                 terrainView,
@@ -135,23 +141,46 @@ int main() {
                 generationError
             );
             
-            if (generateRequested && !generationFuture.valid()) {
+            if (generateRequested && !generationThread.joinable()) {
                 // snapshot the requested settings
                 const TerrainSettings requestedSettings = draftSettings;
                 pendingSettings = requestedSettings;
 
                 generationError.clear();
 
-                // launch generation in the background
-                generationFuture = std::async(
-                    std::launch::async,
-                    [requestedSettings]() {
-                        return generateTerrain(requestedSettings);
-                    }
-                );
+                try {
+                    std::promise<std::optional<TerrainMap>> generationPromise;
+                    generationFuture = generationPromise.get_future();
+
+                    // launch cancellable generation in the background
+                    generationThread = std::jthread(
+                        [
+                            requestedSettings,
+                            promise = std::move(generationPromise)
+                        ](std::stop_token stopToken) mutable {
+                            try {
+                                promise.set_value(generateTerrain(
+                                    requestedSettings,
+                                    stopToken
+                                ));
+                            } catch (...) {
+                                promise.set_exception(std::current_exception());
+                            }
+                        }
+                    );
+                } catch (const std::exception& error) {
+                    generationFuture = {};
+                    pendingSettings.reset();
+                    generationError = error.what();
+                }
             }
 
             EndDrawing();
+        }
+
+        if (generationThread.joinable()) {
+            generationThread.request_stop();
+            generationThread.join();
         }
     }
 
