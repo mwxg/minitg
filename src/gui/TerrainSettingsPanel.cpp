@@ -25,7 +25,7 @@ bool TerrainSettingsPanel::draw(
     constexpr float contentHeight = 1034.0f;
     constexpr float errorHeight = 72.0f;
     constexpr int minimumMapSize = 64;
-    constexpr int maximumMapSize = 8192;
+    constexpr int maximumMapSize = 2048;
     constexpr float moistureThresholdGap = 0.01f;
 
     const float fixedContentX = bounds.x + padding;
