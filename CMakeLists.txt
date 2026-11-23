@@ -21,7 +21,7 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(raylib raygui)
 
-add_executable(minitg
+add_executable(minitg WIN32
     src/main.cpp
     src/gui/Raygui.cpp
     src/gui/TerrainSettingsPanel.cpp
@@ -30,6 +30,12 @@ add_executable(minitg
     src/terrain/TerrainClassifier.cpp
     src/terrain/TerrainGenerator.cpp
 )
+
+if(WIN32)
+    target_sources(minitg PRIVATE
+        resources/windows/minitg.rc
+    )
+endif()
 
 target_sources(minitg PRIVATE
     src/rendering/TerrainRenderer.hpp
@@ -63,6 +69,16 @@ add_custom_command(TARGET minitg POST_BUILD
         "${CMAKE_SOURCE_DIR}/assets"
         "$<TARGET_FILE_DIR:minitg>/assets"
     COMMENT "Copying runtime assets"
+)
+
+install(
+    TARGETS minitg
+    RUNTIME DESTINATION .
+)
+
+install(
+    DIRECTORY "${CMAKE_SOURCE_DIR}/assets"
+    DESTINATION .
 )
 
 if(MSVC)
