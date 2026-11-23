@@ -6,6 +6,8 @@
 TerrainType classifyTerrain(
     float elevation,
     float moisture,
+    float temperature,
     const TerrainThresholds& thresholds,
-    const MoistureThresholds& moistureThresholds
+    const MoistureThresholds& moistureThresholds,
+    const TemperatureThresholds& temperatureThresholds
 );

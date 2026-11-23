@@ -19,14 +19,24 @@ Color terrainColor(TerrainType type) {
         return Color{20, 55, 120, 255};
     case TerrainType::Water:
         return Color{35, 110, 180, 255};
+    case TerrainType::FrozenWater:
+        return Color{165, 205, 225, 255};
     case TerrainType::Sand:
         return Color{220, 205, 140, 255};
     case TerrainType::Desert:
         return Color{205, 180, 105, 255};
+    case TerrainType::Savanna:
+        return Color{165, 175, 75, 255};
     case TerrainType::Grass:
         return Color{70, 145, 75, 255};
     case TerrainType::Forest:
         return Color{35, 100, 50, 255};
+    case TerrainType::Rainforest:
+        return Color{20, 85, 40, 255};
+    case TerrainType::Taiga:
+        return Color{45, 90, 65, 255};
+    case TerrainType::Tundra:
+        return Color{150, 160, 135, 255};
     case TerrainType::Rock:
         return Color{115, 110, 105, 255};
     case TerrainType::Snow:
@@ -80,8 +90,10 @@ TerrainRenderer::TerrainRenderer(
             const TerrainType type = classifyTerrain(
                 cell.elevation,
                 cell.moisture,
+                cell.temperature,
                 settings.thresholds,
-                settings.moistureThresholds
+                settings.moistureThresholds,
+                settings.temperatureThresholds
             );
             ImageDrawPixel(&terrainImage, x, y, terrainColor(type));
 

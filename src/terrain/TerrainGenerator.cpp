@@ -189,6 +189,15 @@ void validateTerrainSettings(const TerrainSettings& settings) {
 
     validateNoiseSettings(settings.elevationNoise, "Elevation");
     validateNoiseSettings(settings.moistureNoise, "Moisture");
+    validateNoiseSettings(settings.tempuratureNoise, "Temperature");
+
+    if (!std::isfinite(settings.elevationCooling) ||
+        settings.elevationCooling < 0.0f ||
+        settings.elevationCooling > 1.0f) {
+        throw std::invalid_argument(
+            "Elevation cooling must be between 0 and 1"
+        );
+    }
 
     if (!std::isfinite(settings.islandRadius) ||
         settings.islandRadius <= 0.0f ||
@@ -254,6 +263,29 @@ void validateTerrainSettings(const TerrainSettings& settings) {
     if (moistureThresholds.dry >= moistureThresholds.wet) {
         throw std::invalid_argument(
             "Moisture thresholds must be strictly increasing"
+        );
+    }
+
+    const TemperatureThresholds& temperatureThresholds =
+        settings.temperatureThresholds;
+
+    if (!std::isfinite(temperatureThresholds.cold) ||
+        !std::isfinite(temperatureThresholds.hot)) {
+        throw std::invalid_argument(
+            "Temperature thresholds must be finite"
+        );
+    }
+
+    if (temperatureThresholds.cold < 0.0f ||
+        temperatureThresholds.hot > 1.0f) {
+        throw std::invalid_argument(
+            "Temperature thresholds must be between 0 and 1"
+        );
+    }
+
+    if (temperatureThresholds.cold >= temperatureThresholds.hot) {
+        throw std::invalid_argument(
+            "Temperature thresholds must be strictly increasing"
         );
     }
 }
