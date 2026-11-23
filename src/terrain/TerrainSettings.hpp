@@ -43,7 +43,7 @@ struct TerrainSettings {
     float islandRadius = 0.65f;
 
     // maximum amount removed from elevation
-    float islandFalloffStrength = 0.6f;
+    float islandFalloffStrength = 0.45f;
 
     TerrainThresholds thresholds;
     MoistureThresholds moistureThresholds;
