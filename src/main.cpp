@@ -56,7 +56,7 @@ int main() {
     GuiSetStyle(DEFAULT, BASE_COLOR_PRESSED, 0x8FD3A8FF);
     GuiSetStyle(DEFAULT, TEXT_COLOR_PRESSED, 0x174A2DFF);
 
-    {
+    { // keep rendering resources scoped so they are destroyed before CloseWindow()
         TerrainSettings activeSettings;
         TerrainSettings draftSettings = activeSettings;
         TerrainSettingsPanel settingsPanel;
