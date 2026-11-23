@@ -446,7 +446,7 @@ bool TerrainSettingsPanel::draw(
 
     if (GuiDropdownBox(
             viewDropdownBounds,
-            "Terrain;Moisture;Temperature",
+            "Terrain;Moisture;Temperature;Elevation",
             &viewSelection_,
             viewDropdownOpen_)) {
         viewDropdownOpen_ = !viewDropdownOpen_;
@@ -459,6 +459,8 @@ bool TerrainSettingsPanel::draw(
         terrainView = TerrainView::Moisture;
     } else if (viewSelection_ == 2) {
         terrainView = TerrainView::Temperature;
+    } else if (viewSelection_ == 3) {
+        terrainView = TerrainView::Elevation;
     }
 
     return applyPressed;

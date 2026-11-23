@@ -21,4 +21,5 @@ private:
     Texture2D terrainTexture_{};
     Texture2D moistureTexture_{};
     Texture2D temperatureTexture_{};
+    Texture2D elevationTexture_{};
 };

@@ -12,7 +12,8 @@ A single world seed controls terrain generation. The elevation field uses the
 world seed directly, while the generator derives separate deterministic seeds
 for the moisture and temperature fields. This keeps all three maps tied to the
 same world seed without giving them identical noise patterns. The application
-can display the resulting terrain, moisture bands, or temperature field.
+can display the resulting terrain, moisture bands, temperature field, or
+grayscale elevation bands.
 
 An optional island falloff gradually lowers elevation toward the edges of the
 map, creating a central landmass surrounded by water. Its radius and strength

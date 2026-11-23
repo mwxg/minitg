@@ -13,6 +13,15 @@ enum class MoistureBand : std::uint8_t {
     Wet
 };
 
+enum class ElevationBand : std::uint8_t {
+    DeepWater,
+    Water,
+    Sand,
+    Grass,
+    Rock,
+    Snow
+};
+
 Color terrainColor(TerrainType type) {
     switch (type) {
     case TerrainType::DeepWater:
@@ -59,6 +68,25 @@ Color moistureColor(MoistureBand band) {
     return MAGENTA; // unexpected values are visually obvious
 }
 
+Color elevationColor(ElevationBand band) {
+    switch (band) {
+    case ElevationBand::DeepWater:
+        return Color{25, 25, 25, 255};
+    case ElevationBand::Water:
+        return Color{70, 70, 70, 255};
+    case ElevationBand::Sand:
+        return Color{115, 115, 115, 255};
+    case ElevationBand::Grass:
+        return Color{160, 160, 160, 255};
+    case ElevationBand::Rock:
+        return Color{205, 205, 205, 255};
+    case ElevationBand::Snow:
+        return Color{245, 245, 245, 255};
+    }
+
+    return MAGENTA; // unexpected values are visually obvious
+}
+
 Color temperatureColor(float temperature) {
     const float value = std::clamp(temperature, 0.0f, 1.0f);
     const auto red = static_cast<unsigned char>(255.0f * value);
@@ -80,6 +108,28 @@ MoistureBand classifyMoisture(
     return MoistureBand::Moderate;
 }
 
+ElevationBand classifyElevation(
+    float elevation,
+    const TerrainThresholds& thresholds
+) noexcept {
+    if (elevation < thresholds.deepWater) {
+        return ElevationBand::DeepWater;
+    }
+    if (elevation < thresholds.water) {
+        return ElevationBand::Water;
+    }
+    if (elevation < thresholds.sand) {
+        return ElevationBand::Sand;
+    }
+    if (elevation < thresholds.grass) {
+        return ElevationBand::Grass;
+    }
+    if (elevation < thresholds.rock) {
+        return ElevationBand::Rock;
+    }
+    return ElevationBand::Snow;
+}
+
 } // namespace
 
 TerrainRenderer::TerrainRenderer(
@@ -89,6 +139,7 @@ TerrainRenderer::TerrainRenderer(
     Image terrainImage = GenImageColor(map.width(), map.height(), BLACK);
     Image moistureImage = GenImageColor(map.width(), map.height(), BLACK);
     Image temperatureImage = GenImageColor(map.width(), map.height(), BLACK);
+    Image elevationImage = GenImageColor(map.width(), map.height(), BLACK);
 
     // convert every terrain cell into a color depending on the view type
     for (int y = 0; y < map.height(); y++) {
@@ -124,6 +175,17 @@ TerrainRenderer::TerrainRenderer(
                 y,
                 temperatureColor(cell.temperature)
             );
+
+            // elevation view
+            ImageDrawPixel(
+                &elevationImage,
+                x,
+                y,
+                elevationColor(classifyElevation(
+                    cell.elevation,
+                    settings.thresholds
+                ))
+            );
         }
     }
 
@@ -131,21 +193,25 @@ TerrainRenderer::TerrainRenderer(
     terrainTexture_ = LoadTextureFromImage(terrainImage);
     moistureTexture_ = LoadTextureFromImage(moistureImage);
     temperatureTexture_ = LoadTextureFromImage(temperatureImage);
+    elevationTexture_ = LoadTextureFromImage(elevationImage);
 
     // release cpu images after upload
     UnloadImage(terrainImage);
     UnloadImage(moistureImage);
     UnloadImage(temperatureImage);
+    UnloadImage(elevationImage);
 
     SetTextureFilter(terrainTexture_, TEXTURE_FILTER_POINT);
     SetTextureFilter(moistureTexture_, TEXTURE_FILTER_POINT);
     SetTextureFilter(temperatureTexture_, TEXTURE_FILTER_POINT);
+    SetTextureFilter(elevationTexture_, TEXTURE_FILTER_POINT);
 }
 
 TerrainRenderer::~TerrainRenderer() {
     UnloadTexture(terrainTexture_);
     UnloadTexture(moistureTexture_);
     UnloadTexture(temperatureTexture_);
+    UnloadTexture(elevationTexture_);
 }
 
 void TerrainRenderer::draw(Rectangle viewport, TerrainView view) const {
@@ -154,6 +220,8 @@ void TerrainRenderer::draw(Rectangle viewport, TerrainView view) const {
         texture = &moistureTexture_;
     } else if (view == TerrainView::Temperature) {
         texture = &temperatureTexture_;
+    } else if (view == TerrainView::Elevation) {
+        texture = &elevationTexture_;
     }
 
     const float scale = std::min(
