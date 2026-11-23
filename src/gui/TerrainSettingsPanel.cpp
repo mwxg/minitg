@@ -198,7 +198,7 @@ bool TerrainSettingsPanel::draw(
     advanceRow();
 
     int seedValue = static_cast<int>(std::min(
-        draftSettings.elevationNoise.seed,
+        draftSettings.seed,
         static_cast<std::uint32_t>(std::numeric_limits<int>::max())
     ));
 
@@ -212,7 +212,7 @@ bool TerrainSettingsPanel::draw(
             seedEditMode_)) {
         seedEditMode_ = !seedEditMode_;
     }
-    draftSettings.elevationNoise.seed = static_cast<std::uint32_t>(seedValue);
+    draftSettings.seed = static_cast<std::uint32_t>(seedValue);
     advanceRow();
 
     currentY += sectionSpacing;

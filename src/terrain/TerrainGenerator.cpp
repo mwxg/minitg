@@ -56,6 +56,10 @@ float latticeValue(int x, int y, std::uint32_t seed) noexcept {
     return hashToUnitFloat(hashCoordinates(x, y, seed));
 }
 
+std::uint32_t deriveMoistureSeed(std::uint32_t worldSeed) noexcept {
+    return worldSeed ^ 0x9E3779B9u;
+}
+
 // nonlinearly remap position so the transition between 
 // lattice points is an eased one
 // leave starting point slow, speed up, slow down before reaching second point
@@ -104,7 +108,12 @@ float sampleValueNoise(float x, float y, std::uint32_t seed) noexcept {
 // combine multiple layers (octaves) of noise into one normalized
 // elevation sample
 // low values represent lower terrain and vice versa
-float sampleFractalNoise(float x, float y, const NoiseSettings& settings) noexcept {
+float sampleFractalNoise(
+    float x,
+    float y,
+    std::uint32_t seed,
+    const NoiseSettings& settings
+) noexcept {
     // track both the weighted noise and the total weight so the final result
     // remains in [0, 1] regardless of how many octaves are used
     float total = 0.0f;
@@ -118,7 +127,7 @@ float sampleFractalNoise(float x, float y, const NoiseSettings& settings) noexce
         const float noise = sampleValueNoise(
             x * frequency,
             y * frequency,
-            static_cast<std::uint32_t>(settings.seed)
+            seed
         );
 
         // larger amplitudes give an octave more influence over the elevation
@@ -258,25 +267,22 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
     validateTerrainSettings(settings);
 
     TerrainMap map(settings);
-
-    NoiseSettings moistureNoise = settings.moistureNoise;
-
-    // derive moisture seed from world seed
-    // so they have different maps
-    moistureNoise.seed = settings.elevationNoise.seed ^ 0x9E3779B9u;
+    const std::uint32_t moistureSeed = deriveMoistureSeed(settings.seed);
 
     for (int y = 0; y < map.height(); y++) {
         for (int x = 0; x < map.width(); x++) {
             float elevation = sampleFractalNoise(
                 static_cast<float>(x),
                 static_cast<float>(y),
+                settings.seed,
                 settings.elevationNoise
             );
 
             const float moisture = sampleFractalNoise(
                 static_cast<float>(x),
                 static_cast<float>(y),
-                moistureNoise
+                moistureSeed,
+                settings.moistureNoise
             );
 
             if (settings.islandFalloffEnabled) {

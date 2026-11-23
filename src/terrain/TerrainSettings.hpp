@@ -3,7 +3,6 @@
 #include <cstdint>
 
 struct NoiseSettings {
-    std::uint32_t seed = 429195;
     float frequency = 0.015f;
     int octaves = 5;
     float persistence = 0.5f;
@@ -26,11 +25,11 @@ struct MoistureThresholds {
 struct TerrainSettings {
     int width = 512;
     int height = 512;
+    std::uint32_t seed = 429195;
     NoiseSettings elevationNoise;
 
     // broader moisture regions
     NoiseSettings moistureNoise{
-        0,
         0.008f,
         4,
         0.5f,
