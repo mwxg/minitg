@@ -58,6 +58,10 @@ std::uint32_t deriveMoistureSeed(std::uint32_t worldSeed) noexcept {
     return worldSeed ^ 0x9E3779B9u;
 }
 
+std::uint32_t deriveTemperatureSeed(std::uint32_t worldSeed) noexcept {
+    return worldSeed ^ 0x85EBCA6Bu;
+}
+
 // nonlinearly remap position so the transition between 
 // lattice points is an eased one
 // leave starting point slow, speed up, slow down before reaching second point
@@ -266,6 +270,7 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
 
     TerrainMap map(settings);
     const std::uint32_t moistureSeed = deriveMoistureSeed(settings.seed);
+    const std::uint32_t temperatureSeed = deriveTemperatureSeed(settings.seed);
 
     for (int y = 0; y < map.height(); y++) {
         for (int x = 0; x < map.width(); x++) {
@@ -281,6 +286,13 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
                 static_cast<float>(y),
                 moistureSeed,
                 settings.moistureNoise
+            );
+
+            float temperature = sampleFractalNoise(
+                static_cast<float>(x),
+                static_cast<float>(y),
+                temperatureSeed,
+                settings.tempuratureNoise
             );
 
             if (settings.islandFalloffEnabled) {
@@ -310,9 +322,24 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
                 );
             }
 
+            // cool terrain above sea level
+            const float landElevation = std::max(
+                0.0f,
+                elevation - settings.thresholds.water
+            );
+            const float normalizedLandElevation =
+                landElevation / (1.0f - settings.thresholds.water);
+
+            temperature = std::clamp(
+                temperature - normalizedLandElevation * settings.elevationCooling,
+                0.0f,
+                1.0f
+            );
+
             TerrainCell& cell = map.at(x, y);
             cell.elevation = elevation;
             cell.moisture = moisture;
+            cell.temperature = temperature;
         }
     }
 

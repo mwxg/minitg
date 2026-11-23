@@ -22,6 +22,11 @@ struct MoistureThresholds {
     float wet = 0.65f;
 };
 
+struct TemperatureThresholds {
+    float cold = 0.35f;
+    float hot = 0.65f;
+};
+
 struct TerrainSettings {
     int width = 512;
     int height = 512;
@@ -36,6 +41,14 @@ struct TerrainSettings {
         2.0f
     };
 
+    // broader temperature regions
+    NoiseSettings tempuratureNoise{
+        0.006f,
+        3,
+        0.5f,
+        2.0f
+    };
+
     bool islandFalloffEnabled = true;
 
     // where elevation reduction begins
@@ -44,6 +57,9 @@ struct TerrainSettings {
     // maximum amount removed from elevation
     float islandFalloffStrength = 0.45f;
 
+    float elevationCooling = 0.35f;
+
     TerrainThresholds thresholds;
     MoistureThresholds moistureThresholds;
+    TemperatureThresholds temperatureThresholds;
 };
