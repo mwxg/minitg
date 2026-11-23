@@ -7,6 +7,7 @@
 #include <limits>
 #include <stdexcept>
 #include <algorithm>
+#include <string>
 
 namespace {
 
@@ -133,23 +134,22 @@ float sampleFractalNoise(float x, float y, const NoiseSettings& settings) noexce
     return total / totalAmplitude;
 }
 
-void validateTerrainSettings(const TerrainSettings& settings) {
-    if (settings.width < 2 || settings.height < 2) {
-        throw std::invalid_argument(
-            "Terrain dimensions must be at least 2"
-        );
-    }
+void validateNoiseSettings(
+    const NoiseSettings& settings,
+    const char* name
+) {
+    const std::string prefix = std::string{name} + " noise ";
 
     if (!std::isfinite(settings.frequency) ||
         settings.frequency <= 0.0f) {
         throw std::invalid_argument(
-            "Terrain frequency must be positive and finite"
+            prefix + "frequency must be positive and finite"
         );
     }
 
     if (settings.octaves <= 0) {
         throw std::invalid_argument(
-            "Terrain must have at least one octave"
+            prefix + "must have at least one octave"
         );
     }
 
@@ -157,16 +157,35 @@ void validateTerrainSettings(const TerrainSettings& settings) {
         settings.persistence < 0.0f ||
         settings.persistence > 1.0f) {
         throw std::invalid_argument(
-            "Terrain persistence must be between 0 and 1"
+            prefix + "persistence must be between 0 and 1"
         );
     }
 
     if (!std::isfinite(settings.lacunarity) ||
         settings.lacunarity < 1.0f) {
         throw std::invalid_argument(
-            "Terrain lacunarity must be at least 1"
+            prefix + "lacunarity must be at least 1"
         );
     }
+}
+
+void validateTerrainSettings(const TerrainSettings& settings) {
+    if (settings.width < 2 || settings.height < 2) {
+        throw std::invalid_argument(
+            "Terrain dimensions must be at least 2"
+        );
+    }
+
+    const NoiseSettings elevationNoise{
+        static_cast<std::uint32_t>(settings.seed),
+        settings.frequency,
+        settings.octaves,
+        settings.persistence,
+        settings.lacunarity
+    };
+
+    validateNoiseSettings(elevationNoise, "Elevation");
+    validateNoiseSettings(settings.moistureNoise, "Moisture");
 
     if (!std::isfinite(settings.islandRadius) ||
         settings.islandRadius <= 0.0f ||
