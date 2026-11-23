@@ -19,6 +19,39 @@ An optional island falloff gradually lowers elevation toward the edges of the
 map, creating a central landmass surrounded by water. Its radius and strength
 can be adjusted from the terrain settings panel.
 
+## Noise settings
+
+Elevation, moisture, and temperature each have their own fBm noise settings.
+The generator starts with one layer of value noise, then adds more layers
+(`octaves`) at progressively different scales and strengths. It divides the
+combined result by the total strength of the layers, keeping the result in the
+`0.00` to `1.00` range.
+
+- **Frequency** controls the scale of the first noise layer. A lower frequency
+  produces larger, smoother regions; a higher frequency produces smaller,
+  more rapidly changing regions. For example, a frequency of `0.015` makes
+  the first layer span roughly `1 / 0.015`, or 67 cells, per noise interval.
+
+- **Octaves** is the number of noise layers combined. The first octave creates
+  the broad shape, while each additional octave can add finer detail. More
+  octaves generally make the map more detailed and also increase generation
+  cost.
+
+- **Persistence** multiplies an octave's strength to get the strength of the
+  next octave. With the default value of `0.5`, successive strengths are `1`,
+  `0.5`, `0.25`, and so on. Lower values make the broad first octave dominate;
+  higher values give fine details more influence. It must be between `0` and
+  `1`.
+
+- **Lacunarity** multiplies an octave's frequency to get the frequency of the
+  next octave. With the default value of `2.0`, each layer has features about
+  half the size of the preceding layer. A value closer to `1` keeps successive
+  layers at similar scales; a larger value creates a wider jump between broad
+  shapes and fine details. It must be at least `1`.
+
+For an octave numbered `n` starting at zero, its frequency is
+`frequency * lacunarity^n` and its strength is `persistence^n`.
+
 ## Biome colors
 
 The terrain view uses the following colors:
