@@ -189,7 +189,7 @@ void validateTerrainSettings(const TerrainSettings& settings) {
 
     validateNoiseSettings(settings.elevationNoise, "Elevation");
     validateNoiseSettings(settings.moistureNoise, "Moisture");
-    validateNoiseSettings(settings.tempuratureNoise, "Temperature");
+    validateNoiseSettings(settings.temperatureNoise, "Temperature");
 
     if (!std::isfinite(settings.elevationCooling) ||
         settings.elevationCooling < 0.0f ||
@@ -324,7 +324,7 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
                 static_cast<float>(x),
                 static_cast<float>(y),
                 temperatureSeed,
-                settings.tempuratureNoise
+                settings.temperatureNoise
             );
 
             if (settings.islandFalloffEnabled) {

@@ -23,6 +23,7 @@ private:
     bool seedEditMode_ = false;
     bool elevationOctavesEditMode_ = false;
     bool moistureOctavesEditMode_ = false;
+    bool temperatureOctavesEditMode_ = false;
     bool viewDropdownOpen_ = false;
     int viewSelection_ = 0;
     Vector2 scrollOffset_{};

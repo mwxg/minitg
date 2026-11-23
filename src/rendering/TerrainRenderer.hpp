@@ -20,4 +20,5 @@ private:
     // gpu textures owned by this renderer
     Texture2D terrainTexture_{};
     Texture2D moistureTexture_{};
+    Texture2D temperatureTexture_{};
 };

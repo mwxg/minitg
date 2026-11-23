@@ -22,11 +22,12 @@ bool TerrainSettingsPanel::draw(
     constexpr float sliderValueGap = 10.0f;
     constexpr float sectionSpacing = 18.0f;
     constexpr float sectionHeaderHeight = 28.0f;
-    constexpr float contentHeight = 1034.0f;
+    constexpr float contentHeight = 1412.0f;
     constexpr float errorHeight = 72.0f;
     constexpr int minimumMapSize = 64;
     constexpr int maximumMapSize = 2048;
     constexpr float moistureThresholdGap = 0.01f;
+    constexpr float temperatureThresholdGap = 0.01f;
 
     const float fixedContentX = bounds.x + padding;
     const float fixedContentWidth = bounds.width - padding * 2.0f;
@@ -60,6 +61,7 @@ bool TerrainSettingsPanel::draw(
         seedEditMode_ = false;
         elevationOctavesEditMode_ = false;
         moistureOctavesEditMode_ = false;
+        temperatureOctavesEditMode_ = false;
     }
 
     fixedY += controlHeight + rowSpacing;
@@ -329,6 +331,78 @@ bool TerrainSettingsPanel::draw(
     );
 
     currentY += sectionSpacing;
+    drawSection("TEMPERATURE");
+
+    drawSlider(
+        "Frequency",
+        TextFormat("%.3f", draftSettings.temperatureNoise.frequency),
+        &draftSettings.temperatureNoise.frequency,
+        0.001f,
+        0.1f
+    );
+
+    drawLabel("Octaves");
+    if (GuiSpinner(
+            Rectangle{controlX, currentY, inputWidth, controlHeight},
+            nullptr,
+            &draftSettings.temperatureNoise.octaves,
+            1,
+            10,
+            temperatureOctavesEditMode_)) {
+        temperatureOctavesEditMode_ = !temperatureOctavesEditMode_;
+    }
+    advanceRow();
+
+    drawSlider(
+        "Persistence",
+        TextFormat("%.2f", draftSettings.temperatureNoise.persistence),
+        &draftSettings.temperatureNoise.persistence,
+        0.0f,
+        1.0f
+    );
+    drawSlider(
+        "Lacunarity",
+        TextFormat("%.2f", draftSettings.temperatureNoise.lacunarity),
+        &draftSettings.temperatureNoise.lacunarity,
+        1.0f,
+        4.0f
+    );
+
+    // keep temperature thresholds strictly ordered
+    draftSettings.temperatureThresholds.cold = std::clamp(
+        draftSettings.temperatureThresholds.cold,
+        0.0f,
+        1.0f - temperatureThresholdGap
+    );
+    draftSettings.temperatureThresholds.hot = std::clamp(
+        draftSettings.temperatureThresholds.hot,
+        draftSettings.temperatureThresholds.cold + temperatureThresholdGap,
+        1.0f
+    );
+
+    drawSlider(
+        "Cold Threshold",
+        TextFormat("%.2f", draftSettings.temperatureThresholds.cold),
+        &draftSettings.temperatureThresholds.cold,
+        0.0f,
+        draftSettings.temperatureThresholds.hot - temperatureThresholdGap
+    );
+    drawSlider(
+        "Hot Threshold",
+        TextFormat("%.2f", draftSettings.temperatureThresholds.hot),
+        &draftSettings.temperatureThresholds.hot,
+        draftSettings.temperatureThresholds.cold + temperatureThresholdGap,
+        1.0f
+    );
+    drawSlider(
+        "Elevation Cooling",
+        TextFormat("%.2f", draftSettings.elevationCooling),
+        &draftSettings.elevationCooling,
+        0.0f,
+        1.0f
+    );
+
+    currentY += sectionSpacing;
     drawSection("ISLAND");
 
     drawLabel("Falloff");
@@ -366,7 +440,7 @@ bool TerrainSettingsPanel::draw(
 
     if (GuiDropdownBox(
             viewDropdownBounds,
-            "Terrain;Moisture",
+            "Terrain;Moisture;Temperature",
             &viewSelection_,
             viewDropdownOpen_)) {
         viewDropdownOpen_ = !viewDropdownOpen_;
@@ -375,6 +449,8 @@ bool TerrainSettingsPanel::draw(
     terrainView = TerrainView::Terrain;
     if (viewSelection_ == 1) {
         terrainView = TerrainView::Moisture;
+    } else if (viewSelection_ == 2) {
+        terrainView = TerrainView::Temperature;
     }
 
     return applyPressed;

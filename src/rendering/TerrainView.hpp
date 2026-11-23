@@ -2,5 +2,6 @@
 
 enum class TerrainView {
     Terrain,
-    Moisture
+    Moisture,
+    Temperature
 };

@@ -42,7 +42,7 @@ struct TerrainSettings {
     };
 
     // broader temperature regions
-    NoiseSettings tempuratureNoise{
+    NoiseSettings temperatureNoise{
         0.006f,
         3,
         0.5f,

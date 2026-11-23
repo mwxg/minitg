@@ -59,6 +59,14 @@ Color moistureColor(MoistureBand band) {
     return MAGENTA; // unexpected values are visually obvious
 }
 
+Color temperatureColor(float temperature) {
+    const float value = std::clamp(temperature, 0.0f, 1.0f);
+    const auto red = static_cast<unsigned char>(255.0f * value);
+    const auto blue = static_cast<unsigned char>(255.0f * (1.0f - value));
+
+    return Color{red, 80, blue, 255};
+}
+
 MoistureBand classifyMoisture(
     float moisture,
     const MoistureThresholds& thresholds
@@ -80,6 +88,7 @@ TerrainRenderer::TerrainRenderer(
 ) {
     Image terrainImage = GenImageColor(map.width(), map.height(), BLACK);
     Image moistureImage = GenImageColor(map.width(), map.height(), BLACK);
+    Image temperatureImage = GenImageColor(map.width(), map.height(), BLACK);
 
     // convert every terrain cell into a color depending on the view type
     for (int y = 0; y < map.height(); y++) {
@@ -107,30 +116,44 @@ TerrainRenderer::TerrainRenderer(
                     settings.moistureThresholds
                 ))
             );
+
+            // temperature view
+            ImageDrawPixel(
+                &temperatureImage,
+                x,
+                y,
+                temperatureColor(cell.temperature)
+            );
         }
     }
 
     // upload images to gpu textures
     terrainTexture_ = LoadTextureFromImage(terrainImage);
     moistureTexture_ = LoadTextureFromImage(moistureImage);
+    temperatureTexture_ = LoadTextureFromImage(temperatureImage);
 
     // release cpu images after upload
     UnloadImage(terrainImage);
     UnloadImage(moistureImage);
+    UnloadImage(temperatureImage);
 
     SetTextureFilter(terrainTexture_, TEXTURE_FILTER_POINT);
     SetTextureFilter(moistureTexture_, TEXTURE_FILTER_POINT);
+    SetTextureFilter(temperatureTexture_, TEXTURE_FILTER_POINT);
 }
 
 TerrainRenderer::~TerrainRenderer() {
     UnloadTexture(terrainTexture_);
     UnloadTexture(moistureTexture_);
+    UnloadTexture(temperatureTexture_);
 }
 
 void TerrainRenderer::draw(Rectangle viewport, TerrainView view) const {
     const Texture2D* texture = &terrainTexture_;
     if (view == TerrainView::Moisture) {
         texture = &moistureTexture_;
+    } else if (view == TerrainView::Temperature) {
+        texture = &temperatureTexture_;
     }
 
     const float scale = std::min(
