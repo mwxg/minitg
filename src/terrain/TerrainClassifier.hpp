@@ -1,3 +1,5 @@
+#pragma once
+
 #include "TerrainSettings.hpp"
 #include "TerrainType.hpp"
 
