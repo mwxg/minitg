@@ -48,6 +48,14 @@ target_include_directories(minitg PRIVATE
 
 target_link_libraries(minitg PRIVATE raylib)
 
+if(MINGW)
+    target_link_options(minitg PRIVATE
+        -static
+        -static-libgcc
+        -static-libstdc++
+    )
+endif()
+
 target_compile_features(minitg PRIVATE cxx_std_20)
 
 add_custom_command(TARGET minitg POST_BUILD
