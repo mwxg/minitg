@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="460" viewBox="0 0 720 460" role="img" aria-labelledby="title description">
+  <title id="title">MiniTG biome colors</title>
+  <desc id="description">Color swatches for all thirteen terrain types used by MiniTG.</desc>
+
+  <style>
+    .heading { font: 700 24px sans-serif; fill: #24292f; }
+    .label { font: 600 16px sans-serif; }
+    .value { font: 14px monospace; }
+    .light { fill: #ffffff; }
+    .dark { fill: #17212b; }
+  </style>
+
+  <rect width="720" height="460" rx="8" fill="#ffffff"/>
+  <text class="heading" x="20" y="34">MiniTG biome colors</text>
+
+  <g transform="translate(20 54)">
+    <rect width="330" height="48" rx="6" fill="#143778"/>
+    <text class="label light" x="14" y="21">Deep water</text><text class="value light" x="14" y="39">#143778</text>
+  </g>
+  <g transform="translate(370 54)">
+    <rect width="330" height="48" rx="6" fill="#236EB4"/>
+    <text class="label light" x="14" y="21">Water</text><text class="value light" x="14" y="39">#236EB4</text>
+  </g>
+  <g transform="translate(20 112)">
+    <rect width="330" height="48" rx="6" fill="#A5CDE1"/>
+    <text class="label dark" x="14" y="21">Frozen water</text><text class="value dark" x="14" y="39">#A5CDE1</text>
+  </g>
+  <g transform="translate(370 112)">
+    <rect width="330" height="48" rx="6" fill="#DCCD8C"/>
+    <text class="label dark" x="14" y="21">Sand</text><text class="value dark" x="14" y="39">#DCCD8C</text>
+  </g>
+  <g transform="translate(20 170)">
+    <rect width="330" height="48" rx="6" fill="#CDB469"/>
+    <text class="label dark" x="14" y="21">Desert</text><text class="value dark" x="14" y="39">#CDB469</text>
+  </g>
+  <g transform="translate(370 170)">
+    <rect width="330" height="48" rx="6" fill="#A5AF4B"/>
+    <text class="label dark" x="14" y="21">Savanna</text><text class="value dark" x="14" y="39">#A5AF4B</text>
+  </g>
+  <g transform="translate(20 228)">
+    <rect width="330" height="48" rx="6" fill="#46914B"/>
+    <text class="label light" x="14" y="21">Grass</text><text class="value light" x="14" y="39">#46914B</text>
+  </g>
+  <g transform="translate(370 228)">
+    <rect width="330" height="48" rx="6" fill="#196946"/>
+    <text class="label light" x="14" y="21">Forest</text><text class="value light" x="14" y="39">#196946</text>
+  </g>
+  <g transform="translate(20 286)">
+    <rect width="330" height="48" rx="6" fill="#0A4B23"/>
+    <text class="label light" x="14" y="21">Rainforest</text><text class="value light" x="14" y="39">#0A4B23</text>
+  </g>
+  <g transform="translate(370 286)">
+    <rect width="330" height="48" rx="6" fill="#376464"/>
+    <text class="label light" x="14" y="21">Taiga</text><text class="value light" x="14" y="39">#376464</text>
+  </g>
+  <g transform="translate(20 344)">
+    <rect width="330" height="48" rx="6" fill="#96A087"/>
+    <text class="label dark" x="14" y="21">Tundra</text><text class="value dark" x="14" y="39">#96A087</text>
+  </g>
+  <g transform="translate(370 344)">
+    <rect width="330" height="48" rx="6" fill="#736E69"/>
+    <text class="label light" x="14" y="21">Rock</text><text class="value light" x="14" y="39">#736E69</text>
+  </g>
+  <g transform="translate(20 402)">
+    <rect width="680" height="48" rx="6" fill="#F0F5FA" stroke="#c7ced6"/>
+    <text class="label dark" x="14" y="21">Snow</text><text class="value dark" x="14" y="39">#F0F5FA</text>
+  </g>
+</svg>

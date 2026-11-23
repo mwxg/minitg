@@ -23,21 +23,7 @@ can be adjusted from the terrain settings panel.
 
 The terrain view uses the following colors:
 
-| Terrain type | RGB | Hex |
-| --- | --- | --- |
-| Deep water | `20, 55, 120` | `#143778` |
-| Water | `35, 110, 180` | `#236EB4` |
-| Frozen water | `165, 205, 225` | `#A5CDE1` |
-| Sand | `220, 205, 140` | `#DCCD8C` |
-| Desert | `205, 180, 105` | `#CDB469` |
-| Savanna | `165, 175, 75` | `#A5AF4B` |
-| Grass | `70, 145, 75` | `#46914B` |
-| Forest | `25, 105, 70` | `#196946` |
-| Rainforest | `10, 75, 35` | `#0A4B23` |
-| Taiga | `55, 100, 100` | `#376464` |
-| Tundra | `150, 160, 135` | `#96A087` |
-| Rock | `115, 110, 105` | `#736E69` |
-| Snow | `240, 245, 250` | `#F0F5FA` |
+![MiniTG biome color palette](screenshots/biome-colors.svg)
 
 ## Terrain classification
 
