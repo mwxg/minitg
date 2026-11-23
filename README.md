@@ -62,7 +62,7 @@ The terrain view uses the following colors:
 
 Elevation, moisture, and temperature are normalized to the range `0.00` to
 `1.00`. The table below describes classification with the default settings;
-the thresholds can be changed in the terrain settings panel. `Any` means that
+moisture and temperature thresholds can be changed in the terrain settings panel. `Any` means that
 the value does not affect that terrain type.
 
 | Terrain type | Elevation | Moisture | Temperature |
