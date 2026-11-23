@@ -126,7 +126,8 @@ int main() {
             const bool generateRequested = settingsPanel.draw(
                 draftSettings,
                 terrainView,
-                sidebarBounds
+                sidebarBounds,
+                generationError
             );
             
             if (generateRequested && !generationFuture.valid()) {

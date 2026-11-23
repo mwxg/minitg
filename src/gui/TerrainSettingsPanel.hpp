@@ -2,6 +2,8 @@
 
 #include <raylib.h>
 
+#include <string>
+
 #include "../rendering/TerrainView.hpp"
 #include "../terrain/TerrainSettings.hpp"
 
@@ -10,7 +12,8 @@ public:
     bool draw(
         TerrainSettings& settings,
         TerrainView& terrainView,
-        Rectangle bounds
+        Rectangle bounds,
+        const std::string& generationError
     );
 
 private:

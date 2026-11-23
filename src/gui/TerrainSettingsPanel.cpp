@@ -8,7 +8,8 @@
 bool TerrainSettingsPanel::draw(
     TerrainSettings& draftSettings,
     TerrainView& terrainView,
-    Rectangle bounds
+    Rectangle bounds,
+    const std::string& generationError
 ) {
     GuiPanel(bounds, "Terrain Settings");
 
@@ -21,6 +22,7 @@ bool TerrainSettingsPanel::draw(
     constexpr float sectionSpacing = 18.0f;
     constexpr float sectionHeaderHeight = 28.0f;
     constexpr float contentHeight = 1034.0f;
+    constexpr float errorHeight = 72.0f;
     constexpr int minimumMapSize = 64;
     constexpr int maximumMapSize = 8192;
     constexpr float moistureThresholdGap = 0.01f;
@@ -52,13 +54,34 @@ bool TerrainSettingsPanel::draw(
 
     fixedY += controlHeight + rowSpacing;
 
+    if (!generationError.empty()) {
+        const int previousTextColor = GuiGetStyle(LABEL, TEXT_COLOR_NORMAL);
+        const int previousTextAlignmentVertical = GuiGetStyle(DEFAULT, TEXT_ALIGNMENT_VERTICAL);
+        const int previousTextWrapMode = GuiGetStyle(DEFAULT, TEXT_WRAP_MODE);
+
+        GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, 0xC43B3BFF);
+        GuiSetStyle(DEFAULT, TEXT_ALIGNMENT_VERTICAL, TEXT_ALIGN_TOP);
+        GuiSetStyle(DEFAULT, TEXT_WRAP_MODE, TEXT_WRAP_WORD);
+        GuiLabel(
+            Rectangle{
+                fixedContentX,
+                fixedY,
+                fixedContentWidth,
+                errorHeight
+            },
+            generationError.c_str()
+        );
+        GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, previousTextColor);
+        GuiSetStyle(DEFAULT, TEXT_ALIGNMENT_VERTICAL, previousTextAlignmentVertical);
+        GuiSetStyle(DEFAULT, TEXT_WRAP_MODE, previousTextWrapMode);
+
+        fixedY += errorHeight + rowSpacing;
+    }
+
     const float fixedControlX = fixedContentX + labelWidth;
     const float fixedInputWidth = fixedContentWidth - labelWidth;
 
-    GuiLabel(
-        Rectangle{fixedContentX, fixedY, labelWidth, controlHeight},
-        "View"
-    );
+    GuiLabel(Rectangle{fixedContentX, fixedY, labelWidth, controlHeight}, "View");
 
     const Rectangle viewDropdownBounds{
         fixedControlX,
