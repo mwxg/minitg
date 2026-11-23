@@ -315,6 +315,13 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
             TerrainCell& cell = map.at(x, y);
             cell.elevation = elevation;
             cell.moisture = moisture;
+            if (moisture < settings.moistureThresholds.dry) {
+                cell.moistureBand = MoistureBand::Dry;
+            } else if (moisture >= settings.moistureThresholds.wet) {
+                cell.moistureBand = MoistureBand::Wet;
+            } else {
+                cell.moistureBand = MoistureBand::Moderate;
+            }
             cell.type = classifyTerrain(
                 elevation,
                 moisture,

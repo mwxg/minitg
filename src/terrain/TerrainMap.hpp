@@ -5,9 +5,16 @@
 
 #include <vector>
 
+enum class MoistureBand {
+    Dry,
+    Moderate,
+    Wet
+};
+
 struct TerrainCell {
     float elevation = 0.0f;
     float moisture = 0.0f;
+    MoistureBand moistureBand = MoistureBand::Dry;
     TerrainType type = TerrainType::DeepWater;
 };
 

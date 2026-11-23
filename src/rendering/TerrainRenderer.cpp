@@ -27,6 +27,19 @@ Color terrainColor(TerrainType type) {
     return MAGENTA; // unexpected values are visually obvious
 }
 
+Color moistureColor(MoistureBand band) {
+    switch (band) {
+    case MoistureBand::Dry:
+        return Color{170, 215, 240, 255};
+    case MoistureBand::Moderate:
+        return Color{65, 145, 210, 255};
+    case MoistureBand::Wet:
+        return Color{15, 55, 120, 255};
+    }
+
+    return MAGENTA; // unexpected values are visually obvious
+}
+
 } // namespace
 
 TerrainRenderer::TerrainRenderer(const TerrainMap& map) {
@@ -42,20 +55,11 @@ TerrainRenderer::TerrainRenderer(const TerrainMap& map) {
             ImageDrawPixel(&terrainImage, x, y, terrainColor(cell.type));
 
             // moisture view
-            const unsigned char moistureValue =
-                static_cast<unsigned char>(
-                    std::clamp(cell.moisture, 0.0f, 1.0f) * 255.0f
-                );
             ImageDrawPixel(
                 &moistureImage,
                 x,
                 y,
-                Color{
-                    moistureValue,
-                    moistureValue,
-                    moistureValue,
-                    255
-                }
+                moistureColor(cell.moistureBand)
             );
         }
     }
