@@ -4,8 +4,7 @@
 
 namespace {
 
-Color terrainColor(TerrainType type)
-{
+Color terrainColor(TerrainType type) {
     switch (type) {
     case TerrainType::DeepWater:
         return Color{20, 55, 120, 255};
@@ -26,48 +25,73 @@ Color terrainColor(TerrainType type)
 
 } // namespace
 
-TerrainRenderer::TerrainRenderer(const TerrainMap& map)
-{
-    Image image = GenImageColor(map.width(), map.height(), BLACK);
+TerrainRenderer::TerrainRenderer(const TerrainMap& map) {
+    Image terrainImage = GenImageColor(map.width(), map.height(), BLACK);
+    Image moistureImage = GenImageColor(map.width(), map.height(), BLACK);
 
-    // convert every terrain cell into a color
+    // convert every terrain cell into a color depending on the view type
     for (int y = 0; y < map.height(); y++) {
         for (int x = 0; x < map.width(); x++) {
             const TerrainCell& cell = map.at(x, y);
-            ImageDrawPixel(&image, x, y, terrainColor(cell.type));
+
+            // regular terrain view
+            ImageDrawPixel(&terrainImage, x, y, terrainColor(cell.type));
+
+            // moisture view
+            const unsigned char moistureValue =
+                static_cast<unsigned char>(
+                    std::clamp(cell.moisture, 0.0f, 1.0f) * 255.0f
+                );
+            ImageDrawPixel(
+                &moistureImage,
+                x,
+                y,
+                Color{
+                    moistureValue,
+                    moistureValue,
+                    moistureValue,
+                    255
+                }
+            );
         }
     }
 
-    // Texture2D is uploaded to graphics memory while
-    // Image is CPU-accessible
-    texture_ = LoadTextureFromImage(image);
+    // upload images to gpu textures
+    terrainTexture_ = LoadTextureFromImage(terrainImage);
+    moistureTexture_ = LoadTextureFromImage(moistureImage);
 
-    // once data is in a texture, CPU-side image is no longer needed
-    UnloadImage(image);
+    // release cpu images after upload
+    UnloadImage(terrainImage);
+    UnloadImage(moistureImage);
 
-    SetTextureFilter(texture_, TEXTURE_FILTER_POINT);
+    SetTextureFilter(terrainTexture_, TEXTURE_FILTER_POINT);
+    SetTextureFilter(moistureTexture_, TEXTURE_FILTER_POINT);
 }
 
-TerrainRenderer::~TerrainRenderer()
-{
-    UnloadTexture(texture_);
+TerrainRenderer::~TerrainRenderer() {
+    UnloadTexture(terrainTexture_);
+    UnloadTexture(moistureTexture_);
 }
 
-void TerrainRenderer::draw(Rectangle viewport) const
-{
+void TerrainRenderer::draw(Rectangle viewport, TerrainView view) const {
+    const Texture2D* texture = &terrainTexture_;
+    if (view == TerrainView::Moisture) {
+        texture = &moistureTexture_;
+    }
+
     const float scale = std::min(
-        viewport.width / texture_.width,
-        viewport.height / texture_.height
+        viewport.width / texture->width,
+        viewport.height / texture->height
     );
 
-    const float drawWidth = texture_.width * scale;
-    const float drawHeight = texture_.height * scale;
+    const float drawWidth = texture->width * scale;
+    const float drawHeight = texture->height * scale;
 
     const Rectangle source {
         0.0f,
         0.0f,
-        static_cast<float>(texture_.width),
-        static_cast<float>(texture_.height)
+        static_cast<float>(texture->width),
+        static_cast<float>(texture->height)
     };
 
     const Rectangle destination{
@@ -78,7 +102,7 @@ void TerrainRenderer::draw(Rectangle viewport) const
     };
 
     DrawTexturePro(
-        texture_,
+        *texture,
         source,
         destination,
         Vector2{0.0f, 0.0f},

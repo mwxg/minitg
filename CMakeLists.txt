@@ -33,6 +33,7 @@ add_executable(minitg
 
 target_sources(minitg PRIVATE
     src/rendering/TerrainRenderer.hpp
+    src/rendering/TerrainView.hpp
     src/terrain/TerrainMap.hpp
     src/terrain/TerrainSettings.hpp
     src/terrain/TerrainType.hpp

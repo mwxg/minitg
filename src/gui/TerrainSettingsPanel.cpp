@@ -5,7 +5,11 @@
 #include <algorithm>
 #include <limits>
 
-bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds) {
+bool TerrainSettingsPanel::draw(
+    TerrainSettings& draftSettings,
+    TerrainView& terrainView,
+    Rectangle bounds
+) {
     GuiPanel(bounds, "Terrain Settings");
 
     constexpr float padding = 20.0f;
@@ -221,6 +225,22 @@ bool TerrainSettingsPanel::draw(TerrainSettings& draftSettings, Rectangle bounds
         },
         "Generate Terrain"
     );
+
+    advanceRow();
+
+    drawLabel("View");
+    if (GuiDropdownBox(
+            Rectangle{controlX, currentY, inputWidth, controlHeight},
+            "Terrain;Moisture",
+            &viewSelection_,
+            viewDropdownOpen_)) {
+        viewDropdownOpen_ = !viewDropdownOpen_;
+    }
+
+    terrainView = TerrainView::Terrain;
+    if (viewSelection_ == 1) {
+        terrainView = TerrainView::Moisture;
+    }
 
     return applyPressed;
 }

@@ -3,6 +3,7 @@
 #include <raylib.h>
 
 #include "../terrain/TerrainMap.hpp"
+#include "TerrainView.hpp"
 
 class TerrainRenderer {
 public:
@@ -13,9 +14,10 @@ public:
     TerrainRenderer(const TerrainRenderer&) = delete;
     TerrainRenderer& operator=(const TerrainRenderer&) = delete;
 
-    void draw(Rectangle viewport) const;
+    void draw(Rectangle viewport, TerrainView view) const;
 
 private:
-    // GPU texture owned by this renderer
-    Texture2D texture_{};
+    // gpu textures owned by this renderer
+    Texture2D terrainTexture_{};
+    Texture2D moistureTexture_{};
 };

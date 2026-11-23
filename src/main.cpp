@@ -10,6 +10,7 @@
 
 #include "gui/TerrainSettingsPanel.hpp"
 #include "rendering/TerrainRenderer.hpp"
+#include "rendering/TerrainView.hpp"
 #include "terrain/TerrainGenerator.hpp"
 
 int main() {
@@ -67,6 +68,8 @@ int main() {
         std::optional<TerrainSettings> pendingSettings;
         std::string generationError;
 
+        TerrainView terrainView = TerrainView::Terrain;
+
         while (!WindowShouldClose())
         {
             // poll for completion without blocking
@@ -118,10 +121,14 @@ int main() {
             };
 
             // draw the current terrain while generation runs
-            renderer->draw(terrainBounds);
+            renderer->draw(terrainBounds, terrainView);
 
             // draw GUI last so it remains above rendered content
-            const bool generateRequested = settingsPanel.draw(draftSettings, sidebarBounds);
+            const bool generateRequested = settingsPanel.draw(
+                draftSettings,
+                terrainView,
+                sidebarBounds
+            );
             
             if (generateRequested && !generationFuture.valid()) {
                 // snapshot the requested settings
