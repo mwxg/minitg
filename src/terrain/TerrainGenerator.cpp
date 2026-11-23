@@ -103,7 +103,7 @@ float sampleValueNoise(float x, float y, std::uint32_t seed) noexcept {
 // combine multiple layers (octaves) of noise into one normalized
 // elevation sample
 // low values represent lower terrain and vice versa
-float sampleFractalNoise(float x, float y, const TerrainSettings& settings) noexcept {
+float sampleFractalNoise(float x, float y, const NoiseSettings& settings) noexcept {
     // track both the weighted noise and the total weight so the final result
     // remains in [0, 1] regardless of how many octaves are used
     float total = 0.0f;
@@ -230,7 +230,13 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
             float elevation = sampleFractalNoise(
                 static_cast<float>(x),
                 static_cast<float>(y),
-                settings
+                NoiseSettings{
+                    static_cast<std::uint32_t>(settings.seed),
+                    settings.frequency,
+                    settings.octaves,
+                    settings.persistence,
+                    settings.lacunarity
+                }
             );
 
             if (settings.islandFalloffEnabled) {

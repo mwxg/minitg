@@ -1,5 +1,15 @@
 #pragma once
 
+#include <cstdint>
+
+struct NoiseSettings {
+    std::uint32_t seed = 1;
+    float frequency = 0.015f;
+    int octaves = 5;
+    float persistence = 0.5f;
+    float lacunarity = 2.0f;
+};
+
 struct TerrainThresholds {
     float deepWater = 0.25f;
     float water = 0.40;

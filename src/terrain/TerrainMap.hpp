@@ -7,6 +7,7 @@
 
 struct TerrainCell {
     float elevation = 0.0f;
+    float moisture = 0.0f;
     TerrainType type = TerrainType::DeepWater;
 };
 
