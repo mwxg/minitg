@@ -19,6 +19,13 @@ An optional island falloff gradually lowers elevation toward the edges of the
 map, creating a central landmass surrounded by water. Its radius and strength
 can be adjusted from the terrain settings panel.
 
+## Download
+
+Download the latest version from the [GitHub Releases page](https://github.com/mwxg/minitg/releases/latest).
+
+- [Windows installer](https://github.com/mwxg/minitg/releases/download/v1.0.0/MiniTG-1.0.0-win64.exe)
+- [Portable Windows ZIP](https://github.com/mwxg/minitg/releases/download/v1.0.0/MiniTG-1.0.0-win64.zip)
+
 ## Noise settings
 
 Elevation, moisture, and temperature each have their own fBm noise settings.
