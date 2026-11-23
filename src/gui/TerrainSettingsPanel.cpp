@@ -9,6 +9,7 @@ bool TerrainSettingsPanel::draw(
     TerrainSettings& draftSettings,
     TerrainView& terrainView,
     Rectangle bounds,
+    bool isGenerating,
     const std::string& generationError
 ) {
     GuiPanel(bounds, "Terrain Settings");
@@ -32,10 +33,19 @@ bool TerrainSettingsPanel::draw(
     float fixedY = bounds.y + 52.0f;
 
     // fixed actions remain visible above scrolling settings
+    if (isGenerating) {
+        GuiDisable();
+    }
+
     const bool applyPressed = GuiButton(
         Rectangle{fixedContentX, fixedY, fixedContentWidth, controlHeight},
-        "Generate Terrain"
+        isGenerating ? "Generating..." : "Generate Terrain"
     );
+
+    if (isGenerating) {
+        GuiEnable();
+    }
+
     fixedY += controlHeight + rowSpacing;
 
     const bool resetPressed = GuiButton(

@@ -13,6 +13,7 @@ public:
         TerrainSettings& settings,
         TerrainView& terrainView,
         Rectangle bounds,
+        bool isGenerating,
         const std::string& generationError
     );
 

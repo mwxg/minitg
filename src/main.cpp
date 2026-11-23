@@ -123,10 +123,12 @@ int main() {
             renderer->draw(terrainBounds, terrainView);
 
             // draw GUI last so it remains above rendered content
+            const bool isGenerating = generationFuture.valid();
             const bool generateRequested = settingsPanel.draw(
                 draftSettings,
                 terrainView,
                 sidebarBounds,
+                isGenerating,
                 generationError
             );
             
