@@ -1,6 +1,16 @@
 cmake_minimum_required(VERSION 3.27)
 
-project(minitg VERSION 0.1.0 LANGUAGES CXX)
+project(minitg VERSION 1.0.0 LANGUAGES CXX)
+
+# Keep Windows builds self-contained. MSVC otherwise uses the DLL-based C/C++
+# runtime, which requires the matching Visual C++ Redistributable on the user's
+# computer. This setting is declared before dependencies are created so raylib
+# uses the same runtime as MiniTG.
+if(MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY
+        "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+    )
+endif()
 
 include(FetchContent)
 
@@ -32,8 +42,17 @@ add_executable(minitg WIN32
 )
 
 if(WIN32)
+    file(TO_CMAKE_PATH
+        "${CMAKE_SOURCE_DIR}/resources/windows/minitgLogo.ico"
+        MINITG_ICON_PATH
+    )
+    configure_file(
+        resources/windows/minitg.rc.in
+        "${CMAKE_CURRENT_BINARY_DIR}/minitg.rc"
+        @ONLY
+    )
     target_sources(minitg PRIVATE
-        resources/windows/minitg.rc
+        "${CMAKE_CURRENT_BINARY_DIR}/minitg.rc"
     )
 endif()
 
