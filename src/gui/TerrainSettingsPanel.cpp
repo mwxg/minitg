@@ -23,6 +23,7 @@ bool TerrainSettingsPanel::draw(
     constexpr float contentHeight = 1034.0f;
     constexpr int minimumMapSize = 64;
     constexpr int maximumMapSize = 8192;
+    constexpr float moistureThresholdGap = 0.01f;
 
     const float fixedContentX = bounds.x + padding;
     const float fixedContentWidth = bounds.width - padding * 2.0f;
@@ -266,18 +267,31 @@ bool TerrainSettingsPanel::draw(
         1.0f,
         4.0f
     );
+
+    // keep moisture thresholds strictly ordered
+    draftSettings.moistureThresholds.dry = std::clamp(
+        draftSettings.moistureThresholds.dry,
+        0.0f,
+        1.0f - moistureThresholdGap
+    );
+    draftSettings.moistureThresholds.wet = std::clamp(
+        draftSettings.moistureThresholds.wet,
+        draftSettings.moistureThresholds.dry + moistureThresholdGap,
+        1.0f
+    );
+
     drawSlider(
         "Dry Threshold",
         TextFormat("%.2f", draftSettings.moistureThresholds.dry),
         &draftSettings.moistureThresholds.dry,
         0.0f,
-        1.0f
+        draftSettings.moistureThresholds.wet - moistureThresholdGap
     );
     drawSlider(
         "Wet Threshold",
         TextFormat("%.2f", draftSettings.moistureThresholds.wet),
         &draftSettings.moistureThresholds.wet,
-        0.0f,
+        draftSettings.moistureThresholds.dry + moistureThresholdGap,
         1.0f
     );
 
