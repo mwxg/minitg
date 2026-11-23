@@ -4,6 +4,9 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <stdexcept>
+#include <string>
+#include <utility>
 
 namespace {
 
@@ -20,6 +23,54 @@ enum class ElevationBand : std::uint8_t {
     Grass,
     Rock,
     Snow
+};
+
+class ImageOwner {
+public:
+    explicit ImageOwner(Image image) : image_(image) {}
+
+    ~ImageOwner() {
+        if (IsImageValid(image_)) {
+            UnloadImage(image_);
+        }
+    }
+
+    ImageOwner(const ImageOwner&) = delete;
+    ImageOwner& operator=(const ImageOwner&) = delete;
+
+    ImageOwner(ImageOwner&& other) noexcept
+        : image_(std::exchange(other.image_, {})) {}
+
+    Image& get() noexcept {
+        return image_;
+    }
+
+private:
+    Image image_{};
+};
+
+class TextureOwner {
+public:
+    explicit TextureOwner(Texture2D texture) : texture_(texture) {}
+
+    ~TextureOwner() {
+        if (IsTextureValid(texture_)) {
+            UnloadTexture(texture_);
+        }
+    }
+
+    TextureOwner(const TextureOwner&) = delete;
+    TextureOwner& operator=(const TextureOwner&) = delete;
+
+    TextureOwner(TextureOwner&& other) noexcept
+        : texture_(std::exchange(other.texture_, {})) {}
+
+    Texture2D release() noexcept {
+        return std::exchange(texture_, {});
+    }
+
+private:
+    Texture2D texture_{};
 };
 
 Color terrainColor(TerrainType type) {
@@ -130,88 +181,109 @@ ElevationBand classifyElevation(
     return ElevationBand::Snow;
 }
 
+template <typename ColorFunction>
+TextureOwner createTexture(
+    const TerrainMap& map,
+    const char* viewName,
+    ColorFunction&& colorForCell
+) {
+    Image image = GenImageColor(map.width(), map.height(), BLACK);
+    if (!IsImageValid(image)) {
+        throw std::runtime_error(
+            std::string{"Failed to allocate "} + viewName + " image"
+        );
+    }
+
+    ImageOwner imageOwner{image};
+    for (int y = 0; y < map.height(); y++) {
+        for (int x = 0; x < map.width(); x++) {
+            ImageDrawPixel(
+                &imageOwner.get(),
+                x,
+                y,
+                colorForCell(map.at(x, y))
+            );
+        }
+    }
+
+    Texture2D texture = LoadTextureFromImage(imageOwner.get());
+    if (!IsTextureValid(texture)) {
+        throw std::runtime_error(
+            std::string{"Failed to upload "} + viewName + " texture"
+        );
+    }
+
+    SetTextureFilter(texture, TEXTURE_FILTER_POINT);
+    return TextureOwner{texture};
+}
+
 } // namespace
 
 TerrainRenderer::TerrainRenderer(
     const TerrainMap& map,
     const TerrainSettings& settings
 ) {
-    Image terrainImage = GenImageColor(map.width(), map.height(), BLACK);
-    Image moistureImage = GenImageColor(map.width(), map.height(), BLACK);
-    Image temperatureImage = GenImageColor(map.width(), map.height(), BLACK);
-    Image elevationImage = GenImageColor(map.width(), map.height(), BLACK);
-
-    // convert every terrain cell into a color depending on the view type
-    for (int y = 0; y < map.height(); y++) {
-        for (int x = 0; x < map.width(); x++) {
-            const TerrainCell& cell = map.at(x, y);
-
-            // regular terrain view
-            const TerrainType type = classifyTerrain(
+    TextureOwner terrain = createTexture(
+        map,
+        "terrain",
+        [&settings](const TerrainCell& cell) {
+            return terrainColor(classifyTerrain(
                 cell.elevation,
                 cell.moisture,
                 cell.temperature,
                 settings.thresholds,
                 settings.moistureThresholds,
                 settings.temperatureThresholds
-            );
-            ImageDrawPixel(&terrainImage, x, y, terrainColor(type));
-
-            // moisture view
-            ImageDrawPixel(
-                &moistureImage,
-                x,
-                y,
-                moistureColor(classifyMoisture(
-                    cell.moisture,
-                    settings.moistureThresholds
-                ))
-            );
-
-            // temperature view
-            ImageDrawPixel(
-                &temperatureImage,
-                x,
-                y,
-                temperatureColor(cell.temperature)
-            );
-
-            // elevation view
-            ImageDrawPixel(
-                &elevationImage,
-                x,
-                y,
-                elevationColor(classifyElevation(
-                    cell.elevation,
-                    settings.thresholds
-                ))
-            );
+            ));
         }
-    }
+    );
+    TextureOwner moisture = createTexture(
+        map,
+        "moisture",
+        [&settings](const TerrainCell& cell) {
+            return moistureColor(classifyMoisture(
+                cell.moisture,
+                settings.moistureThresholds
+            ));
+        }
+    );
+    TextureOwner temperature = createTexture(
+        map,
+        "temperature",
+        [](const TerrainCell& cell) {
+            return temperatureColor(cell.temperature);
+        }
+    );
+    TextureOwner elevation = createTexture(
+        map,
+        "elevation",
+        [&settings](const TerrainCell& cell) {
+            return elevationColor(classifyElevation(
+                cell.elevation,
+                settings.thresholds
+            ));
+        }
+    );
 
-    // upload images to gpu textures
-    terrainTexture_ = LoadTextureFromImage(terrainImage);
-    moistureTexture_ = LoadTextureFromImage(moistureImage);
-    temperatureTexture_ = LoadTextureFromImage(temperatureImage);
-    elevationTexture_ = LoadTextureFromImage(elevationImage);
-
-    // release cpu images after upload
-    UnloadImage(terrainImage);
-    UnloadImage(moistureImage);
-    UnloadImage(temperatureImage);
-    UnloadImage(elevationImage);
-
-    SetTextureFilter(terrainTexture_, TEXTURE_FILTER_POINT);
-    SetTextureFilter(moistureTexture_, TEXTURE_FILTER_POINT);
-    SetTextureFilter(temperatureTexture_, TEXTURE_FILTER_POINT);
-    SetTextureFilter(elevationTexture_, TEXTURE_FILTER_POINT);
+    terrainTexture_ = terrain.release();
+    moistureTexture_ = moisture.release();
+    temperatureTexture_ = temperature.release();
+    elevationTexture_ = elevation.release();
 }
 
 TerrainRenderer::~TerrainRenderer() {
-    UnloadTexture(terrainTexture_);
-    UnloadTexture(moistureTexture_);
-    UnloadTexture(temperatureTexture_);
-    UnloadTexture(elevationTexture_);
+    if (IsTextureValid(terrainTexture_)) {
+        UnloadTexture(terrainTexture_);
+    }
+    if (IsTextureValid(moistureTexture_)) {
+        UnloadTexture(moistureTexture_);
+    }
+    if (IsTextureValid(temperatureTexture_)) {
+        UnloadTexture(temperatureTexture_);
+    }
+    if (IsTextureValid(elevationTexture_)) {
+        UnloadTexture(elevationTexture_);
+    }
 }
 
 void TerrainRenderer::draw(Rectangle viewport, TerrainView view) const {
@@ -222,6 +294,12 @@ void TerrainRenderer::draw(Rectangle viewport, TerrainView view) const {
         texture = &temperatureTexture_;
     } else if (view == TerrainView::Elevation) {
         texture = &elevationTexture_;
+    }
+
+    if (!IsTextureValid(*texture) ||
+        texture->width <= 0 ||
+        texture->height <= 0) {
+        return;
     }
 
     const float scale = std::min(
