@@ -234,8 +234,10 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
     };
 
     NoiseSettings moistureNoise = settings.moistureNoise;
-    moistureNoise.seed =
-        static_cast<std::uint32_t>(settings.seed) ^ 0x9E3779B9u;
+
+    // derive moisture seed from world seed
+    // so they have different maps
+    moistureNoise.seed = static_cast<std::uint32_t>(settings.seed) ^ 0x9E3779B9u;
 
     for (int y = 0; y < map.height(); y++) {
         for (int x = 0; x < map.width(); x++) {
