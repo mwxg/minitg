@@ -3,7 +3,7 @@
 #include <cstdint>
 
 struct NoiseSettings {
-    std::uint32_t seed = 1;
+    std::uint32_t seed = 429195;
     float frequency = 0.015f;
     int octaves = 5;
     float persistence = 0.5f;
@@ -21,7 +21,7 @@ struct TerrainThresholds {
 struct TerrainSettings {
     int width = 512;
     int height = 512;
-    unsigned int seed = 1;
+    unsigned int seed = 429195;
 
     // size of terrain features, lower means larger continents
     float frequency = 0.015f;
@@ -34,6 +34,15 @@ struct TerrainSettings {
 
     // how quickly each layer becomes more detailed
     float lacunarity = 2.0f;
+
+    // broader moisture regions
+    NoiseSettings moistureNoise{
+        0,
+        0.008f,
+        4,
+        0.5f,
+        2.0f
+    };
 
     bool islandFalloffEnabled = true;
 

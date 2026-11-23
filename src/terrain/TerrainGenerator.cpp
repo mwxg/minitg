@@ -225,18 +225,30 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
 
     TerrainMap map(settings);
 
+    const NoiseSettings elevationNoise{
+        static_cast<std::uint32_t>(settings.seed),
+        settings.frequency,
+        settings.octaves,
+        settings.persistence,
+        settings.lacunarity
+    };
+
+    NoiseSettings moistureNoise = settings.moistureNoise;
+    moistureNoise.seed =
+        static_cast<std::uint32_t>(settings.seed) ^ 0x9E3779B9u;
+
     for (int y = 0; y < map.height(); y++) {
         for (int x = 0; x < map.width(); x++) {
             float elevation = sampleFractalNoise(
                 static_cast<float>(x),
                 static_cast<float>(y),
-                NoiseSettings{
-                    static_cast<std::uint32_t>(settings.seed),
-                    settings.frequency,
-                    settings.octaves,
-                    settings.persistence,
-                    settings.lacunarity
-                }
+                elevationNoise
+            );
+
+            const float moisture = sampleFractalNoise(
+                static_cast<float>(x),
+                static_cast<float>(y),
+                moistureNoise
             );
 
             if (settings.islandFalloffEnabled) {
@@ -268,6 +280,7 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
 
             TerrainCell& cell = map.at(x, y);
             cell.elevation = elevation;
+            cell.moisture = moisture;
             cell.type = classifyTerrain(elevation, settings.thresholds);
         }
     }
