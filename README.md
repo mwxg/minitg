@@ -23,21 +23,21 @@ can be adjusted from the terrain settings panel.
 
 The terrain view uses the following colors:
 
-| Color | Terrain type | RGB | Hex |
-| --- | --- | --- | --- |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#143778;border:1px solid #777"></span> | Deep water | `20, 55, 120` | `#143778` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#236EB4;border:1px solid #777"></span> | Water | `35, 110, 180` | `#236EB4` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#A5CDE1;border:1px solid #777"></span> | Frozen water | `165, 205, 225` | `#A5CDE1` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#DCCD8C;border:1px solid #777"></span> | Sand | `220, 205, 140` | `#DCCD8C` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#CDB469;border:1px solid #777"></span> | Desert | `205, 180, 105` | `#CDB469` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#A5AF4B;border:1px solid #777"></span> | Savanna | `165, 175, 75` | `#A5AF4B` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#46914B;border:1px solid #777"></span> | Grass | `70, 145, 75` | `#46914B` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#196946;border:1px solid #777"></span> | Forest | `25, 105, 70` | `#196946` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#0A4B23;border:1px solid #777"></span> | Rainforest | `10, 75, 35` | `#0A4B23` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#376464;border:1px solid #777"></span> | Taiga | `55, 100, 100` | `#376464` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#96A087;border:1px solid #777"></span> | Tundra | `150, 160, 135` | `#96A087` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#736E69;border:1px solid #777"></span> | Rock | `115, 110, 105` | `#736E69` |
-| <span style="display:inline-block;width:1.25em;height:1.25em;background:#F0F5FA;border:1px solid #777"></span> | Snow | `240, 245, 250` | `#F0F5FA` |
+| Terrain type | RGB | Hex |
+| --- | --- | --- |
+| Deep water | `20, 55, 120` | `#143778` |
+| Water | `35, 110, 180` | `#236EB4` |
+| Frozen water | `165, 205, 225` | `#A5CDE1` |
+| Sand | `220, 205, 140` | `#DCCD8C` |
+| Desert | `205, 180, 105` | `#CDB469` |
+| Savanna | `165, 175, 75` | `#A5AF4B` |
+| Grass | `70, 145, 75` | `#46914B` |
+| Forest | `25, 105, 70` | `#196946` |
+| Rainforest | `10, 75, 35` | `#0A4B23` |
+| Taiga | `55, 100, 100` | `#376464` |
+| Tundra | `150, 160, 135` | `#96A087` |
+| Rock | `115, 110, 105` | `#736E69` |
+| Snow | `240, 245, 250` | `#F0F5FA` |
 
 ## Terrain classification
 
