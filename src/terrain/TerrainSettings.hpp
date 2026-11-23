@@ -21,19 +21,7 @@ struct TerrainThresholds {
 struct TerrainSettings {
     int width = 512;
     int height = 512;
-    unsigned int seed = 429195;
-
-    // size of terrain features, lower means larger continents
-    float frequency = 0.015f;
-
-    // number of noise layers
-    int octaves = 5;
-
-    // how strongly smaller features contribute
-    float persistence = 0.5f;
-
-    // how quickly each layer becomes more detailed
-    float lacunarity = 2.0f;
+    NoiseSettings elevationNoise;
 
     // broader moisture regions
     NoiseSettings moistureNoise{

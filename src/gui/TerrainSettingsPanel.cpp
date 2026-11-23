@@ -64,8 +64,8 @@ bool TerrainSettingsPanel::draw(
     advanceRow();
 
     int seedValue = static_cast<int>(std::min(
-        draftSettings.seed,
-        static_cast<unsigned int>(std::numeric_limits<int>::max())
+        draftSettings.elevationNoise.seed,
+        static_cast<std::uint32_t>(std::numeric_limits<int>::max())
     ));
 
     drawLabel("Seed");
@@ -78,7 +78,7 @@ bool TerrainSettingsPanel::draw(
             seedEditMode_)) {
         seedEditMode_ = !seedEditMode_;
     }
-    draftSettings.seed = static_cast<unsigned int>(seedValue);
+    draftSettings.elevationNoise.seed = static_cast<std::uint32_t>(seedValue);
     advanceRow();
 
     drawLabel("Frequency");
@@ -90,8 +90,8 @@ bool TerrainSettingsPanel::draw(
             controlHeight
         },
         nullptr,
-        TextFormat("%.3f", draftSettings.frequency),
-        &draftSettings.frequency,
+        TextFormat("%.3f", draftSettings.elevationNoise.frequency),
+        &draftSettings.elevationNoise.frequency,
         0.001f,
         0.1f
     );
@@ -101,7 +101,7 @@ bool TerrainSettingsPanel::draw(
     if (GuiSpinner(
             Rectangle{controlX, currentY, inputWidth, controlHeight},
             nullptr,
-            &draftSettings.octaves,
+            &draftSettings.elevationNoise.octaves,
             1,
             10,
             octavesEditMode_)) {
@@ -118,8 +118,8 @@ bool TerrainSettingsPanel::draw(
             controlHeight
         },
         nullptr,
-        TextFormat("%.2f", draftSettings.persistence),
-        &draftSettings.persistence,
+        TextFormat("%.2f", draftSettings.elevationNoise.persistence),
+        &draftSettings.elevationNoise.persistence,
         0.0f,
         1.0f
     );
@@ -134,8 +134,8 @@ bool TerrainSettingsPanel::draw(
             controlHeight
         },
         nullptr,
-        TextFormat("%.2f", draftSettings.lacunarity),
-        &draftSettings.lacunarity,
+        TextFormat("%.2f", draftSettings.elevationNoise.lacunarity),
+        &draftSettings.elevationNoise.lacunarity,
         1.0f,
         4.0f
     );

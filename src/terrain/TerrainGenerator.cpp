@@ -176,15 +176,7 @@ void validateTerrainSettings(const TerrainSettings& settings) {
         );
     }
 
-    const NoiseSettings elevationNoise{
-        static_cast<std::uint32_t>(settings.seed),
-        settings.frequency,
-        settings.octaves,
-        settings.persistence,
-        settings.lacunarity
-    };
-
-    validateNoiseSettings(elevationNoise, "Elevation");
+    validateNoiseSettings(settings.elevationNoise, "Elevation");
     validateNoiseSettings(settings.moistureNoise, "Moisture");
 
     if (!std::isfinite(settings.islandRadius) ||
@@ -244,26 +236,18 @@ TerrainMap generateTerrain(const TerrainSettings& settings) {
 
     TerrainMap map(settings);
 
-    const NoiseSettings elevationNoise{
-        static_cast<std::uint32_t>(settings.seed),
-        settings.frequency,
-        settings.octaves,
-        settings.persistence,
-        settings.lacunarity
-    };
-
     NoiseSettings moistureNoise = settings.moistureNoise;
 
     // derive moisture seed from world seed
     // so they have different maps
-    moistureNoise.seed = static_cast<std::uint32_t>(settings.seed) ^ 0x9E3779B9u;
+    moistureNoise.seed = settings.elevationNoise.seed ^ 0x9E3779B9u;
 
     for (int y = 0; y < map.height(); y++) {
         for (int x = 0; x < map.width(); x++) {
             float elevation = sampleFractalNoise(
                 static_cast<float>(x),
                 static_cast<float>(y),
-                elevationNoise
+                settings.elevationNoise
             );
 
             const float moisture = sampleFractalNoise(
