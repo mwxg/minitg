@@ -22,99 +22,24 @@ bool TerrainSettingsPanel::draw(
     constexpr float sliderValueGap = 10.0f;
     constexpr float sectionSpacing = 18.0f;
     constexpr float sectionHeaderHeight = 28.0f;
-    constexpr float contentHeight = 1412.0f;
+    constexpr float contentHeight = 1550.0f;
     constexpr float errorHeight = 72.0f;
     constexpr int minimumMapSize = 64;
     constexpr int maximumMapSize = 2048;
     constexpr float moistureThresholdGap = 0.01f;
     constexpr float temperatureThresholdGap = 0.01f;
 
-    const float fixedContentX = bounds.x + padding;
-    const float fixedContentWidth = bounds.width - padding * 2.0f;
-    float fixedY = bounds.y + 52.0f;
-
-    // fixed actions remain visible above scrolling settings
-    if (isGenerating) {
-        GuiDisable();
-    }
-
-    const bool applyPressed = GuiButton(
-        Rectangle{fixedContentX, fixedY, fixedContentWidth, controlHeight},
-        isGenerating ? "Generating..." : "Generate Terrain"
-    );
-
-    if (isGenerating) {
-        GuiEnable();
-    }
-
-    fixedY += controlHeight + rowSpacing;
-
-    const bool resetPressed = GuiButton(
-        Rectangle{fixedContentX, fixedY, fixedContentWidth, controlHeight},
-        "Reset to Defaults"
-    );
-
-    if (resetPressed) {
-        draftSettings = TerrainSettings{};
-        widthEditMode_ = false;
-        heightEditMode_ = false;
-        seedEditMode_ = false;
-        elevationOctavesEditMode_ = false;
-        moistureOctavesEditMode_ = false;
-        temperatureOctavesEditMode_ = false;
-    }
-
-    fixedY += controlHeight + rowSpacing;
-
-    if (!generationError.empty()) {
-        const int previousTextColor = GuiGetStyle(LABEL, TEXT_COLOR_NORMAL);
-        const int previousTextAlignmentVertical = GuiGetStyle(DEFAULT, TEXT_ALIGNMENT_VERTICAL);
-        const int previousTextWrapMode = GuiGetStyle(DEFAULT, TEXT_WRAP_MODE);
-
-        GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, 0xC43B3BFF);
-        GuiSetStyle(DEFAULT, TEXT_ALIGNMENT_VERTICAL, TEXT_ALIGN_TOP);
-        GuiSetStyle(DEFAULT, TEXT_WRAP_MODE, TEXT_WRAP_WORD);
-        GuiLabel(
-            Rectangle{
-                fixedContentX,
-                fixedY,
-                fixedContentWidth,
-                errorHeight
-            },
-            generationError.c_str()
-        );
-        GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, previousTextColor);
-        GuiSetStyle(DEFAULT, TEXT_ALIGNMENT_VERTICAL, previousTextAlignmentVertical);
-        GuiSetStyle(DEFAULT, TEXT_WRAP_MODE, previousTextWrapMode);
-
-        fixedY += errorHeight + rowSpacing;
-    }
-
-    const float fixedControlX = fixedContentX + labelWidth;
-    const float fixedInputWidth = fixedContentWidth - labelWidth;
-
-    GuiLabel(Rectangle{fixedContentX, fixedY, labelWidth, controlHeight}, "View");
-
-    const Rectangle viewDropdownBounds{
-        fixedControlX,
-        fixedY,
-        fixedInputWidth,
-        controlHeight
-    };
-
-    fixedY += controlHeight + rowSpacing;
-
     const Rectangle scrollBounds{
         bounds.x + padding,
-        fixedY,
+        bounds.y + 52.0f,
         bounds.width - padding * 2.0f,
-        std::max(0.0f, bounds.y + bounds.height - fixedY - padding)
+        std::max(0.0f, bounds.height - 52.0f - padding)
     };
     const Rectangle scrollContent{
         0.0f,
         0.0f,
         scrollBounds.width - 16.0f,
-        contentHeight
+        contentHeight + (generationError.empty() ? 0.0f : errorHeight + rowSpacing)
     };
     Rectangle scrollView{};
 
@@ -126,7 +51,7 @@ bool TerrainSettingsPanel::draw(
         &scrollView
     );
 
-    // scrollable settings sections
+    // scrollable panel content
     BeginScissorMode(
         static_cast<int>(scrollView.x),
         static_cast<int>(scrollView.y),
@@ -182,6 +107,66 @@ bool TerrainSettingsPanel::draw(
         );
         advanceRow();
     };
+
+    if (isGenerating) {
+        GuiDisable();
+    }
+
+    const bool applyPressed = GuiButton(
+        Rectangle{contentX, currentY, contentWidth, controlHeight},
+        isGenerating ? "Generating..." : "Generate Terrain"
+    );
+
+    if (isGenerating) {
+        GuiEnable();
+    }
+
+    advanceRow();
+
+    const bool resetPressed = GuiButton(
+        Rectangle{contentX, currentY, contentWidth, controlHeight},
+        "Reset to Defaults"
+    );
+
+    if (resetPressed) {
+        draftSettings = TerrainSettings{};
+        widthEditMode_ = false;
+        heightEditMode_ = false;
+        seedEditMode_ = false;
+        elevationOctavesEditMode_ = false;
+        moistureOctavesEditMode_ = false;
+        temperatureOctavesEditMode_ = false;
+    }
+
+    advanceRow();
+
+    if (!generationError.empty()) {
+        const int previousTextColor = GuiGetStyle(LABEL, TEXT_COLOR_NORMAL);
+        const int previousTextAlignmentVertical = GuiGetStyle(DEFAULT, TEXT_ALIGNMENT_VERTICAL);
+        const int previousTextWrapMode = GuiGetStyle(DEFAULT, TEXT_WRAP_MODE);
+
+        GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, 0xC43B3BFF);
+        GuiSetStyle(DEFAULT, TEXT_ALIGNMENT_VERTICAL, TEXT_ALIGN_TOP);
+        GuiSetStyle(DEFAULT, TEXT_WRAP_MODE, TEXT_WRAP_WORD);
+        GuiLabel(
+            Rectangle{contentX, currentY, contentWidth, errorHeight},
+            generationError.c_str()
+        );
+        GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, previousTextColor);
+        GuiSetStyle(DEFAULT, TEXT_ALIGNMENT_VERTICAL, previousTextAlignmentVertical);
+        GuiSetStyle(DEFAULT, TEXT_WRAP_MODE, previousTextWrapMode);
+
+        currentY += errorHeight + rowSpacing;
+    }
+
+    drawLabel("View");
+    const Rectangle viewDropdownBounds{
+        controlX,
+        currentY,
+        inputWidth,
+        controlHeight
+    };
+    advanceRow();
 
     drawSection("GENERAL");
 
@@ -436,8 +421,6 @@ bool TerrainSettingsPanel::draw(
         GuiEnable();
     }
 
-    EndScissorMode();
-
     if (GuiDropdownBox(
             viewDropdownBounds,
             "Terrain;Moisture;Temperature",
@@ -445,6 +428,8 @@ bool TerrainSettingsPanel::draw(
             viewDropdownOpen_)) {
         viewDropdownOpen_ = !viewDropdownOpen_;
     }
+
+    EndScissorMode();
 
     terrainView = TerrainView::Terrain;
     if (viewSelection_ == 1) {
