@@ -19,6 +19,8 @@ An optional island falloff gradually lowers elevation toward the edges of the
 map, creating a central landmass surrounded by water. Its radius and strength
 can be adjusted from the terrain settings panel.
 
+![MiniTG opening window](screenshots/screenshot1.png)
+
 ## Download
 
 Download the latest version from the [GitHub Releases page](https://github.com/mwxg/minitg/releases/latest).
