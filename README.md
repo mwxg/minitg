@@ -61,6 +61,29 @@ combined result by the total strength of the layers, keeping the result in the
 For an octave numbered `n` starting at zero, its frequency is
 `frequency * lacunarity^n` and its strength is `persistence^n`.
 
+### Same seed, different views
+
+Each view below uses seed `429195` and the default generation settings. The
+elevation, moisture, and temperature fields are combined to produce the final
+terrain view.
+
+| Terrain | Elevation |
+| --- | --- |
+| ![Terrain view for seed 429195](screenshots/terrain-view.png) | ![Elevation view for seed 429195](screenshots/elevation-view.png) |
+| **Moisture** | **Temperature** |
+| ![Moisture view for seed 429195](screenshots/moisture-view.png) | ![Temperature view for seed 429195](screenshots/temperature-view.png) |
+
+### Same seed, different settings
+
+These examples also use seed `429195`. Apart from the setting named in each
+caption, all settings remain at their defaults.
+
+| Default settings | Island falloff disabled |
+| --- | --- |
+| ![Terrain generated with the default settings](screenshots/terrain-view.png) | ![The same seed generated without island falloff](screenshots/no-falloff.png) |
+| **Low elevation frequency (`0.006`)** | **High elevation frequency (`0.035`)** |
+| ![The same seed generated with broad elevation features](screenshots/low-elevation-frequency.png) | ![The same seed generated with small elevation features](screenshots/high-elevation-frequency.png) |
+
 ## Biome colors
 
 The terrain view uses the following colors:
