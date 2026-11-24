@@ -84,6 +84,22 @@ caption, all settings remain at their defaults.
 | **Low elevation frequency (`0.006`)** | **High elevation frequency (`0.035`)** |
 | ![The same seed generated with broad elevation features](screenshots/low-elevation-frequency.png) | ![The same seed generated with small elevation features](screenshots/high-elevation-frequency.png) |
 
+### Example: Desert world
+
+This example was generated with the seed `2132808243` on a `1000x1000` map.
+
+Other settings used:
+
+| Setting | Value |
+| --- | --- |
+| Dry threshold | 0.54 |
+| Wet threshold | 0.90 |
+| Cold threshold | 0.00 |
+| Hot threshold | 0.15 |
+| Elevation cooling | 0.00 |
+
+![Desert world example](screenshots/sahali.png)
+
 ## Biome colors
 
 The terrain view uses the following colors:
